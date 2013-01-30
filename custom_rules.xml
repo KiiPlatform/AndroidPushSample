@@ -1,0 +1,38 @@
+<project>
+    <property name="properties-file" value="app.properties" />
+
+    <target name="copy-from-kiirest">
+        <copy
+            file="kii_rest/kii_rest/setting.ini"
+            tofile="assets/${properties-file}"
+            overwrite="true"
+        />
+    </target>
+
+    <target name="convert-to-java-properties" depends="copy-from-kiirest">
+        <replaceregexp
+            file="assets/${properties-file}"
+            match="^\[.*\]$"
+            replace=""
+            byline="true"
+        />
+        <!-- client id and secret should be kept in secret -->
+        <replaceregexp
+            file="assets/${properties-file}"
+            match="^client-id.*$"
+            replace=""
+            byline="true"
+        />
+        <!-- client id and secret should be kept in secret -->
+        <replaceregexp
+            file="assets/${properties-file}"
+            match="^client-secret.*$"
+            replace=""
+            byline="true"
+        />
+    </target>
+
+    <target name="-pre-build" depends="convert-to-java-properties">
+    </target>
+
+</project>

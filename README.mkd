@@ -1,0 +1,40 @@
+# Push sample app
+
+## Requirements:
+* python (2.x)
+* android sdk tools
+
+## How to Install
+1. Setup application environment
+    * cd kii_rest/kii_rest
+    * edit setting.ini
+        * app-id: replace with your app-id created on developer portal.
+        * app-key: replace with your app-key created on developer portal.
+        * client-id: replace with your clietn-id created on developer portal.
+        * client-secret: replace with your clietn-secret created on developer portal.
+        * host: 
+            * if your app domain is US: replace with api.kii.com
+            * if your app domain is JP: replace with api-jp.kii.com
+        * gcm-app-key: replace with your GCM app key obtained on https://code.google.com/apis/console
+        * gcm-sender-id replace with your GCM project number.
+    * run setting script
+
+      ~~~
+      python setup.py
+      ~~~
+
+2. Build and install application
+
+   ~~~
+    cd ../../
+    android update project --path . --target android-8
+    ant debug
+    ant installd
+   ~~~
+
+## Send message to app scope topic
+   ~~~
+   cd kii_rest/kii_rest
+   python sendmessage.py
+   ~~~
+   * message can be cofitured by editing property 'push-message' in setting.ini
