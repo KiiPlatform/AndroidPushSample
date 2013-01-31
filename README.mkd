@@ -20,7 +20,7 @@
     * run setting script
 
       ~~~
-      python setup.py
+      python setup_push.py
       ~~~
 
 2. Build and install application
