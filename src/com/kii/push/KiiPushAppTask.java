@@ -12,6 +12,7 @@ import com.kii.cloud.storage.KiiBucket;
 import com.kii.cloud.storage.KiiPushMessage;
 import com.kii.cloud.storage.KiiTopic;
 import com.kii.cloud.storage.KiiUser;
+import com.kii.cloud.storage.exception.app.AppException;
 import com.kii.cloud.storage.exception.app.BadRequestException;
 import com.kii.cloud.storage.exception.app.ConflictException;
 
@@ -35,6 +36,7 @@ public class KiiPushAppTask extends AsyncTask<Object, Void, String> {
         public static final int SENDMESSAGE_TO_USCOPE_TOPIC = 7;
         public static final int GSCOPE_TOPIC = 8;
         public static final int SUBSCRIBE_ASCOPE_TOPIC = 9;
+        public static final int SUBSCRIBE_ABUCKET = 10;
         public static final int LOGIN = Integer.MAX_VALUE;
     }
 
@@ -103,11 +105,25 @@ public class KiiPushAppTask extends AsyncTask<Object, Void, String> {
             return doSubscribeUserScopeTopic();
         case MENU_ID.SUBSCRIBE_ASCOPE_TOPIC:
             return doSubscribeAppScopeTopic();
+        case MENU_ID.SUBSCRIBE_ABUCKET:
+            return doSubscribeAppBucket();
         case MENU_ID.LOGIN:
             return doLogin((String)args[0], (String)args[1]);
         default:
             throw new RuntimeException("Unkown id: " + menuId);
         }
+    }
+
+    private String doSubscribeAppBucket() {
+        try {
+            String bucketName = PropertyManager.getInstance()
+                    .getAppBucketName();
+            KiiBucket appBucket = Kii.bucket(bucketName);
+            Kii.user().pushSubscription().subscribe(appBucket);
+        } catch (Exception e) {
+            this.e = e;
+        }
+        return null;
     }
 
     private String doSubscribeAppScopeTopic() {

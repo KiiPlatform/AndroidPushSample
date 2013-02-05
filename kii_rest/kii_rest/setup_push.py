@@ -32,6 +32,7 @@ class ApiHelper(object):
         self.clientSecret = conf.get('app', 'client-secret')
         self.appTopic = conf.get('constants', 'app-topic-name')
         self.message = conf.get('constants', 'push-message')
+        self.appBucket= conf.get('constants', 'app-bucket-name')
         self.logger = getLogger()
         self.logger.debug('app id: ' + self.appId)
         self.logger.debug('app key: ' + self.appKey)
@@ -147,7 +148,23 @@ class ApiHelper(object):
         response = conn.getresponse()
         self.logger.debug("status: %d", response.status)
         self.logger.debug("body: %s", json.load(response))
-        ''''''
+
+    def createAppBucketObject(self):
+        self.logger.debug('create app bucket')
+        conn = httplib.HTTPConnection(self.host)
+        path = '/api/apps/{0}/buckets/{1}/objects'\
+            .format(self.appId, self.appBucket)
+        headers = {'x-kii-appid': self.appId, 'x-kii-appkey': self.appKey}
+        headers['authorization'] = 'Bearer ' + self.token
+        headers['content-type'] = 'application/json'
+        obj = {'hoge':'dummy'}
+        jsonObj = json.dumps(obj)
+        self.logger.debug('path: %s', path)
+        self.logger.debug('data %s', jsonObj)
+        conn.request('POST', path, jsonObj, headers)
+        response = conn.getresponse()
+        self.logger.debug("status: %d", response.status)
+        self.logger.debug("body: %s", json.load(response))
 
 if __name__ == '__main__':
     helper = ApiHelper()
@@ -156,5 +173,6 @@ if __name__ == '__main__':
     helper.getGCMKey()
     helper.createAppTopic()
     helper.grantSubscriptionOfAppTopic()
+    helper.createAppBucketObject()
 
 

@@ -37,6 +37,7 @@
     <string name="update_object_acl">Update Object ACL</string>
     <string name="create_uscope_topic">Create User Scope Topic</string>
     <string name="subscribe_uscope_topic">Subscribe User Scope Topic</string>
+    <string name="subscribe_ascope_bucket">Subscribe App Scope Bucket</string>
     <string name="sendmessage_to_uscope_topic">Send Message to User Scope Topic</string>
     <string name="subscribe_ascope_topic">Subscribe App Scope Topic</string>
     <string name="add">Add</string>

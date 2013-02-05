@@ -10,6 +10,8 @@
         <item>@string/subscribe_uscope_topic</item>
         <item>@string/sendmessage_to_uscope_topic</item>
         <item>@string/group_topic</item>
+        <item>@string/subscribe_ascope_topic</item>
+        <item>@string/subscribe_ascope_bucket</item>
     </string-array>
 
     <string-array name="kiipush_control">

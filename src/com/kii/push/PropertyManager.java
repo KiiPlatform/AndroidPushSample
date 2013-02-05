@@ -72,6 +72,13 @@ public class PropertyManager {
         return value;
     }
 
+    public String getAppBucketName() {
+        Properties p = System.getProperties();
+        String value =  p.getProperty("app-bucket-name");
+        Log.v(TAG, "App topic name: " + value);
+        return value;
+    }
+
     public String getGCMSenderId() {
         Properties p = System.getProperties();
         String value =  p.getProperty("gcm-sender-id");
