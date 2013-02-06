@@ -32,9 +32,18 @@
     ant installd
    ~~~
 
+NOTE: kii_rest/kii_rest/setting.ini will be used to generate application property on build. After update setting.ini, make sure to run setup_push.py and rebuild application.
+
 ## Send message to app scope topic
    ~~~
    cd kii_rest/kii_rest
    python sendmessage.py
    ~~~
    * message can be cofitured by editing property 'push-message' in setting.ini
+
+## Trigger event on app scope bucket
+   ~~~
+   cd kii_rest/kii_rest
+   python create_app_bucket_object.py.py
+   ~~~
+
