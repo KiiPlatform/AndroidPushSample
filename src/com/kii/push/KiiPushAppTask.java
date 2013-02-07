@@ -161,7 +161,7 @@ public class KiiPushAppTask extends AsyncTask<Object, Void, String> {
     private String doUnregisterGCM() {
         try {
             assertGCMRegistred();
-            GCMRegistrar.unregister(this.activity);
+            GCMRegistrar.unregister(this.activity.getApplicationContext());
         } catch (Exception e) {
             this.e = e;
         }
@@ -243,7 +243,8 @@ public class KiiPushAppTask extends AsyncTask<Object, Void, String> {
     }
 
     private void assertGCMRegistred() throws IllegalStateException {
-        String regId = GCMRegistrar.getRegistrationId(this.activity);
+        String regId = GCMRegistrar.getRegistrationId(this.activity
+                .getApplicationContext());
         if (TextUtils.isEmpty(regId)) {
             throw new IllegalStateException("Register GCM before.");
         }

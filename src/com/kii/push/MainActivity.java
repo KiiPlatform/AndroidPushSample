@@ -59,12 +59,13 @@ public class MainActivity extends ListActivityCore {
         String item = mMenuItems[position];
 
         if (item.equals(getString(R.string.install))) {
-            GCMRegistrar.checkDevice(this);
-            final String regId = GCMRegistrar.getRegistrationId(this);
+            GCMRegistrar.checkDevice(this.getApplicationContext());
+            final String regId = GCMRegistrar.getRegistrationId(this
+                    .getApplicationContext());
             if (TextUtils.isEmpty(regId)) {
                 Log.i(TAG, "Not registered to GCM");
                 PropertyManager pm = PropertyManager.getInstance(); 
-                GCMRegistrar.register(this, pm.getGCMSenderId());
+                GCMRegistrar.register(this.getApplicationContext(), pm.getGCMSenderId());
             } else {
                 Log.i(TAG, "Registered to GCM, installing to kii cloud");
                 new KiiPushAppTask((int)id, item, this).execute(regId);
@@ -114,7 +115,7 @@ public class MainActivity extends ListActivityCore {
         }
         // Unregister GCM
         unregisterReceiver(mHandleMessageReceiver);
-        GCMRegistrar.onDestroy(this);
+        GCMRegistrar.onDestroy(this.getApplicationContext());
         super.onDestroy();
     }
 
