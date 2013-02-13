@@ -31,4 +31,20 @@
         <item>Send message to topic</item>
     </string-array>
 
+    <string-array name="filebucket_push_menu">
+        <item>File Bucket Controll</item>
+        <item>Subscribe File Bucket</item>
+    </string-array>
+
+    <string-array name="filebucket_controll_menu">
+        <item>Create File</item>
+        <item>Update File(meta-data only)</item>
+        <item>Update File</item>
+        <item>Delete File</item>
+        <item>Move File to Trash</item>
+        <item>Update File ACL</item>
+        <item>Update Bucket ACL</item>
+        <item>Delete Bucket</item>
+    </string-array>
+
 </resources>

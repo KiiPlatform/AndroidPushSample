@@ -47,4 +47,7 @@
     <string name="pushmessage_detail">Push Message detail</string>
     <string name="settings">Settings</string>
     <string name="groups">Groups</string>
+    <string name="file_activity">File Bucket Push</string>
+    <string name="file_bucket_controll">File bucket controll</string>
+    <string name="file_bucket_push">File Bucket Push</string>
 </resources>

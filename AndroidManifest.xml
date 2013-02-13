@@ -48,6 +48,7 @@
         <activity android:name=".ShowPushMessageActivity" android:label="@string/pushmessage_detail" />
         <activity android:name=".SettingActivity" android:label="@string/settings" />
         <activity android:name=".GroupListActivity" android:label="@string/groups" />
+        <activity android:name=".FileBucketPushActivity" android:label="@string/file_activity" />
         <receiver
             android:name="com.google.android.gcm.GCMBroadcastReceiver"
             android:permission="com.google.android.c2dm.permission.SEND" >
