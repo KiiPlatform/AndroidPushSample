@@ -7,19 +7,23 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.google.android.gcm.GCMRegistrar;
 import com.kii.cloud.storage.Kii;
 
-public class MainActivity extends ListActivityCore {
+public class MainActivity extends FragmentActivity implements OnItemClickListener{
     private static final String TAG = "KiiPush";
 
     private Activity mActivity;
@@ -30,6 +34,7 @@ public class MainActivity extends ListActivityCore {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.main);
         PropertyManager propMan = PropertyManager.getInstance();
         propMan.load(this.getApplicationContext());
         prefs = PrefWrapper.getInstance(this);
@@ -42,11 +47,8 @@ public class MainActivity extends ListActivityCore {
         registerBroadcastReceiver();
         // Set menu
         mMenuItems = getResources().getStringArray(R.array.kiipush_menu);
-        ArrayAdapter<CharSequence> adp = ArrayAdapter.createFromResource(this,
-                R.array.kiipush_menu,
-                android.R.layout.simple_expandable_list_item_1);
-        setListAdapter(adp);
-        getListView().setTextFilterEnabled(true);
+        ListView lv = (ListView) findViewById(R.id.mainListView);
+        lv.setOnItemClickListener(this);
         // Login UFE
         KiiPushAppTask task = new KiiPushAppTask(KiiPushAppTask.MENU_ID.LOGIN,
                 "LOGIN", this);
@@ -54,9 +56,9 @@ public class MainActivity extends ListActivityCore {
     }
 
     @Override
-    protected void onListItemClick(ListView l, View v, int position, long id) {
+    public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
         // Get item String from position
-        String item = mMenuItems[position];
+        final String item = mMenuItems[position];
 
         if (item.equals(getString(R.string.install))) {
             GCMRegistrar.checkDevice(this.getApplicationContext());
@@ -76,9 +78,36 @@ public class MainActivity extends ListActivityCore {
         } else if (item.equals(getString(R.string.group_topic))) {
             Intent intent = new Intent(this, GroupListActivity.class);
             startActivity(intent);
+        } else if (item.equals(getString(R.string.sendmessage_to_uscope_topic))) {
+            ListDialogFragment.newInstance(R.layout.sendmessage_listdialog,
+                    R.string.send_message, android.R.drawable.ic_menu_edit,
+                    new OnItemClickListener() {
+                        @Override
+                        public void onItemClick(AdapterView<?> parent,
+                                View view, int pos, long id) {
+                            if (pos == 0) {
+                                new KiiPushAppTask(
+                                        (int) KiiPushAppTask.MENU_ID.SENDMESSAGE_TO_USCOPE_TOPIC,
+                                        item, MainActivity.this).execute();
+                            } else if (pos == 1) {
+                                // TODO: implement.
+                                // Load message by MessageTemplateLoader and send it.
+                            } else if (pos == 2) {
+                                MessageTemplateLoader
+                                        .launchEditor(getApplicationContext());
+                            }
+                            dismissDialogByTag(ListDialogFragment.TAG);
+                        }
+                    });
         } else {
             new KiiPushAppTask((int)id, item, this).execute();
         }
+    }
+
+    public void dismissDialogByTag(String TAG) {
+        DialogFragment df = (DialogFragment) getSupportFragmentManager()
+                .findFragmentByTag(TAG);
+        df.dismiss();
     }
 
     @Override
@@ -116,7 +145,8 @@ public class MainActivity extends ListActivityCore {
         // Exist task cancel
         if (mGcmTask != null) {
             mGcmTask.cancel(true);
-            closeDialog(DIALOG_PROGRESS, mActivity);
+            // TODO: Kill ListActivityCore! its too bad.
+            this.removeDialog(ListActivityCore.DIALOG_PROGRESS);
         }
         // Unregister GCM
         unregisterReceiver(mHandleMessageReceiver);
@@ -131,16 +161,18 @@ public class MainActivity extends ListActivityCore {
             if (Constants.ACTION_REGISTERED_GCM.equals(action)) {
                 String regId = intent.getExtras().getString(
                         Constants.EXTRA_MESSAGE);
-                showToastMessage(
+                Toast.makeText(getApplicationContext(),
                         "GCM registration done.\nGoing install to KiiCloud.",
-                        mActivity);
+                        Toast.LENGTH_LONG).show();
                 new KiiPushAppTask(KiiPushAppTask.MENU_ID.INSTALL_PUSH, regId,
                         MainActivity.this);
             } else if (Constants.ACTION_UNREGISTERED_GCM.equals(action)) {
-                showToastMessage("GCM unregistration done.", mActivity);
+                Toast.makeText(getApplicationContext(),
+                        "GCM unregistration done.", Toast.LENGTH_LONG).show();
             } else if (Constants.ACTION_GCM_ERROR.equals(action)) {
-                showToastMessage("GCM registration error was happend.",
-                        mActivity);
+                Toast.makeText(getApplicationContext(),
+                        "GCM registration error was happend.",
+                        Toast.LENGTH_LONG).show();
             }
         }
     };

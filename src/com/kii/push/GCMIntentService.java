@@ -44,6 +44,7 @@ public class GCMIntentService extends GCMBaseIntentService {
     @Override
     protected void onMessage(Context context, Intent intent) {
         Log.i(TAG, "Received message :"+intent.getExtras().toString());
+        Log.i(TAG, "Time :" + System.currentTimeMillis());
         // String message = getString(R.string.gcm_message);
         // intent.setAction(CommonUtilities.ACTION_GCM_ERROR);
         // send(context, intent,message);
