@@ -47,4 +47,10 @@
         <item>Delete Bucket</item>
     </string-array>
 
+    <string-array name="send_push_menu">
+        <item>Send default message</item>
+        <item>Send message with template file</item>
+        <item>Edit template file</item>
+    </string-array>
+
 </resources>
