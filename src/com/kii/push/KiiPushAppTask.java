@@ -99,7 +99,7 @@ public class KiiPushAppTask extends AsyncTask<Object, Void, String> {
         case MENU_ID.CREATE_USCOPE_TOPIC:
             return doCreateUscopeTopic();
         case MENU_ID.SENDMESSAGE_TO_USCOPE_TOPIC:
-            return doSendMessageToUserScopeTopic();
+            return doSendMessageToUserScopeTopic((KiiPushMessage)args[0]);
         case MENU_ID.SUBSCRIBE_USCOPE_TOPIC:
             return doSubscribeUserScopeTopic();
         case MENU_ID.SUBSCRIBE_ASCOPE_TOPIC:
@@ -227,11 +227,9 @@ public class KiiPushAppTask extends AsyncTask<Object, Void, String> {
         return null;
     }
 
-    private String doSendMessageToUserScopeTopic() {
-        KiiPushMessage.Data data = new KiiPushMessage.Data();
-        data.put("custom_message", "Hello, Kii Push servce!");
-        KiiPushMessage msg = KiiPushMessage.buildWith(data).build();
+    private String doSendMessageToUserScopeTopic(KiiPushMessage msg) {
         try {
+            Log.v(TAG, "Sending kii push message. JSON:"+msg.toJSON().toString(2));
             assertGCMRegistred();
             KiiTopic topic = KiiUser.topic(Constants.USERTOPIC);
             topic.sendMessage(msg);

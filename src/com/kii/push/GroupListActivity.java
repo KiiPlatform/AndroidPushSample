@@ -217,9 +217,89 @@ public class GroupListActivity extends FragmentActivity implements
             } else if (position == 2) {
                 doSubscribeTopic();
             } else if (position == 3) {
-                doSendMessageToTopic();
+                SendMessageDialogFragment
+                        .newInstance(R.layout.sendmessage_listdialog,
+                                R.string.send_message,
+                                android.R.drawable.ic_menu_edit,
+                                new OnItemClickListener() {
+                                    @Override
+                                    public void onItemClick(
+                                            AdapterView<?> parent, View view,
+                                            int pos, long id) {
+                                        if (pos == 0) {
+                                            KiiPushMessage.Data data = new KiiPushMessage.Data();
+                                            data.put(
+                                                    "From "
+                                                            + target.getGroupName(),
+                                                    Constants.GROUPTOPIC_MESSAGE
+                                                            + " From "
+                                                            + Kii.user()
+                                                                    .getUsername());
+                                            KiiPushMessage msg = KiiPushMessage
+                                                    .buildWith(data).build();
+                                            doSendMessageToTopic(msg);
+                                        } else if (pos == 1) {
+                                            // Load message by MessageTemplateLoader and send.
+                                            try {
+                                                KiiPushMessage msg = MessageTemplateLoader
+                                                        .loadMessageFromTemplate();
+                                                Log.v(TAG, "Messge: "+msg.toJSON().toString(2));
+                                                doSendMessageToTopic(msg);
+                                            } catch (Exception e) {
+                                                e.printStackTrace();
+                                            }
+                                        } else if (pos == 2) {
+                                            MessageTemplateLoader
+                                                    .launchEditor(((GroupListActivity) getActivity())
+                                                            .getApplicationContext());
+                                        }
+                                        ((GroupListActivity) getActivity())
+                                                .dismissDialogByTag("SendMessage");
+                                    }
+                                })
+                        .show(((GroupListActivity) getActivity())
+                                .getSupportFragmentManager(),
+                                "SendMessage");
             }
         }
+
+        public static class SendMessageDialogFragment extends DialogFragment {
+
+            public static final String TAG = "ListDialogFragment";
+            ListView listView;
+            OnItemClickListener listener; 
+
+            public static SendMessageDialogFragment newInstance(int listViewLayoutId,
+                    int titleResId, int iconResId, OnItemClickListener listener) {
+                SendMessageDialogFragment frag = new SendMessageDialogFragment();
+                Bundle b = new Bundle();
+                b.putInt("layoutId", listViewLayoutId);
+                b.putInt("titleResId", titleResId);
+                b.putInt("iconResId", iconResId);
+                frag.setArguments(b);
+                frag.listener = listener;
+                return frag;
+            }
+
+            @Override
+            public Dialog onCreateDialog(Bundle savedInstanceState) {
+                int layoutId = getArguments().getInt("layoutId");
+                int titleResId = getArguments().getInt("titleResId");
+                int iconResId = getArguments().getInt("iconResId");
+                LayoutInflater inflater = getActivity().getLayoutInflater();
+                listView = (ListView) inflater
+                        .inflate(layoutId, null);
+                listView.setOnItemClickListener(this.listener);
+
+                return new AlertDialog.Builder(getActivity())
+                        .setIcon(iconResId)
+                        .setTitle(titleResId)
+                        .setView(listView).create();
+            }
+
+        }
+
+
 
         private void doAddUser() {
             Log.v(TAG, "doAddUser");
@@ -311,13 +391,8 @@ public class GroupListActivity extends FragmentActivity implements
             });
         }
 
-        private void doSendMessageToTopic() {
+        private void doSendMessageToTopic(KiiPushMessage msg) {
             KiiTopic tp = target.topic(Constants.GROUPTOPIC);
-            KiiPushMessage.Data data = new KiiPushMessage.Data();
-            data.put("From " + target.getGroupName(),
-                    Constants.GROUPTOPIC_MESSAGE + " From "
-                            + Kii.user().getUsername());
-            KiiPushMessage msg = KiiPushMessage.buildWith(data).build();
             tp.sendMessage(msg, new KiiTopicCallBack() {
 
                 @Override
@@ -382,6 +457,12 @@ public class GroupListActivity extends FragmentActivity implements
     public void onItemClick(AdapterView<?> parent, View view, int position,
             long id) {
         this.showListDialog(groups.get(position));
+    }
+
+    public void dismissDialogByTag(String TAG) {
+        DialogFragment df = (DialogFragment) getSupportFragmentManager()
+                .findFragmentByTag(TAG);
+        df.dismiss();
     }
 
 }
