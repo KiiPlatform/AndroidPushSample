@@ -72,10 +72,163 @@ public class GroupListActivity extends FragmentActivity implements
         newFragment.show(this.getSupportFragmentManager(), "editdialog");
     }
 
-    private void showListDialog(KiiGroup target) {
-        DialogFragment newFragment = ListDialogFragment
-                .newInstance(target);
-        newFragment.show(this.getSupportFragmentManager(), "listdialog");
+    private void showListDialog(final KiiGroup target) {
+        ListDialogFragment.newInstance(R.layout.listdailog,
+                R.string.group_operation, android.R.drawable.ic_menu_edit,
+                new OnItemClickListener() {
+                    @Override
+                    public void onItemClick(
+                            AdapterView<?> parent, View view,
+                            int position, long id) {
+                        if (position == 0) {
+                            doAddUser(target);
+                        } else if (position == 1) {
+                            doCreateTopic(target);
+                        } else if (position == 2) {
+                            doSubscribeTopic(target);
+                        } else if (position == 3) {
+                            showSendMessageListDialog(target);
+                        }
+                       
+                    }
+                }).show(this.getSupportFragmentManager(), "listdialog");
+    }
+
+    private void showSendMessageListDialog(final KiiGroup target) {
+        ListDialogFragment.newInstance(
+                R.layout.sendmessage_listdialog, R.string.send_message,
+                android.R.drawable.ic_menu_edit, new OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view,
+                            int pos, long id) {
+                        if (pos == 0) {
+                            KiiPushMessage.Data data = new KiiPushMessage.Data();
+                            data.put("custom-messge",
+                                    "Hello, group: " + target.getGroupName());
+                            KiiPushMessage msg = KiiPushMessage.buildWith(data)
+                                    .build();
+                            doSendMessageToTopic(target, msg);
+                        } else if (pos == 1) {
+                            // Load message by MessageTemplateLoader and send.
+                            try {
+                                KiiPushMessage msg = MessageTemplateLoader
+                                        .loadMessageFromTemplate();
+                                Log.v(TAG, "Messge: "
+                                        + msg.toJSON().toString(2));
+                                doSendMessageToTopic(target, msg);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        } else if (pos == 2) {
+                            MessageTemplateLoader
+                                    .launchEditor(getApplicationContext());
+                        }
+                        dismissDialogByTag("SendMessage");
+                        dismissDialogByTag("listdialog");
+                    }
+                }).show(this.getSupportFragmentManager(), "SendMessage");
+    }
+
+    private void doSendMessageToTopic(KiiGroup target, KiiPushMessage msg) {
+        KiiTopic tp = target.topic(Constants.GROUPTOPIC);
+        tp.sendMessage(msg, new KiiTopicCallBack() {
+
+            @Override
+            public void onSendMessageCompleted(int taskId, KiiTopic target,
+                    KiiPushMessage message, Exception e) {
+                if (e != null) {
+                    GroupListActivity.this.showAlertDialog(e.getMessage());
+                } else {
+                    Toast.makeText(GroupListActivity.this,
+                            "Send message done.", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+    }
+
+    private void doAddUser(final KiiGroup target) {
+        Log.v(TAG, "doAddUser");
+        this.showEditDialog("Input user name",
+                new EditDialogFragment.OnEditDone() {
+                    @Override
+                    public void onEditDone(String input) {
+                        Log.v("onEditDone text: ", input);
+                        if (!TextUtils.isEmpty(input)) {
+                            KiiUser.findUserByUserName(input,
+                                    new KiiUserCallBack() {
+                                        @Override
+                                        public void onFindCompleted(int token,
+                                                KiiUser caller, KiiUser found,
+                                                Exception exception) {
+                                            if (found != null) {
+                                                target.addUser(found);
+                                                target.save(new KiiGroupCallBack() {
+                                                    @Override
+                                                    public void onSaveCompleted(
+                                                            int token,
+                                                            KiiGroup group,
+                                                            Exception exception) {
+                                                        dismissDialogByTag("listdialog");
+                                                        if (exception != null) {
+                                                            GroupListActivity.this
+                                                                    .showAlertDialog(exception
+                                                                            .getMessage());
+                                                        } else {
+                                                            Toast.makeText(
+                                                                    GroupListActivity.this,
+                                                                    "Add user done.",
+                                                                    Toast.LENGTH_LONG)
+                                                                    .show();
+                                                        }
+                                                    }
+                                                });
+                                            } else {
+                                                dismissDialogByTag("listdialog");
+                                                GroupListActivity.this
+                                                        .showAlertDialog(exception
+                                                                .getMessage());
+                                            }
+                                        }
+                                    });
+                        } else {
+                            dismissDialogByTag("listdialog");
+                        }
+                    }
+                });
+    }
+
+    private void doCreateTopic(final KiiGroup target) {
+        KiiTopic tp = target.topic(Constants.GROUPTOPIC);
+        tp.save(new KiiTopicCallBack() {
+            @Override
+            public void onSaveCompleted(int taskId, KiiTopic target, Exception e) {
+                dismissDialogByTag("listdialog");
+                if (e != null) {
+                    GroupListActivity.this.showAlertDialog(e.getMessage());
+                } else {
+                    Toast.makeText(GroupListActivity.this, "Topic created.",
+                            Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+    }
+
+    private void doSubscribeTopic(final KiiGroup target) {
+        KiiTopic tp = target.topic(Constants.GROUPTOPIC);
+        KiiPushSubscription sub = KiiUser.getCurrentUser().pushSubscription();
+        sub.subscribe(tp, new KiiPushCallBack() {
+            @Override
+            public void onSubscribeCompleted(int taskId,
+                    KiiSubscribable target, Exception e) {
+                dismissDialogByTag("listdialog");
+                if (e != null) {
+                    GroupListActivity.this.showAlertDialog(e.getMessage());
+                } else {
+                    Toast.makeText(GroupListActivity.this, "Subscribe done.",
+                            Toast.LENGTH_LONG).show();
+                }
+            }
+        });
     }
 
     private void loadGroups() {
@@ -183,235 +336,6 @@ public class GroupListActivity extends FragmentActivity implements
         }
     }
 
-    public static class ListDialogFragment extends DialogFragment implements
-            OnItemClickListener {
-
-        ListView listView;
-        KiiGroup target;
-        public static ListDialogFragment newInstance(KiiGroup target) {
-            ListDialogFragment frag = new ListDialogFragment();
-            frag.target = target;
-            return frag;
-        }
-
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            LayoutInflater inflater = getActivity().getLayoutInflater();
-            listView = (ListView) inflater
-                    .inflate(R.layout.listdailog, null);
-            listView.setOnItemClickListener(this);
-
-            return new AlertDialog.Builder(getActivity())
-                    .setIcon(android.R.drawable.ic_menu_edit)
-                    .setTitle(R.string.group_operation)
-                    .setView(listView).create();
-        }
-
-        @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position,
-                long id) {
-            if (position == 0) {
-                doAddUser();
-            } else if (position == 1) {
-                doCreateTopic();
-            } else if (position == 2) {
-                doSubscribeTopic();
-            } else if (position == 3) {
-                SendMessageDialogFragment
-                        .newInstance(R.layout.sendmessage_listdialog,
-                                R.string.send_message,
-                                android.R.drawable.ic_menu_edit,
-                                new OnItemClickListener() {
-                                    @Override
-                                    public void onItemClick(
-                                            AdapterView<?> parent, View view,
-                                            int pos, long id) {
-                                        if (pos == 0) {
-                                            KiiPushMessage.Data data = new KiiPushMessage.Data();
-                                            data.put(
-                                                    "From "
-                                                            + target.getGroupName(),
-                                                    Constants.GROUPTOPIC_MESSAGE
-                                                            + " From "
-                                                            + Kii.user()
-                                                                    .getUsername());
-                                            KiiPushMessage msg = KiiPushMessage
-                                                    .buildWith(data).build();
-                                            doSendMessageToTopic(msg);
-                                        } else if (pos == 1) {
-                                            // Load message by MessageTemplateLoader and send.
-                                            try {
-                                                KiiPushMessage msg = MessageTemplateLoader
-                                                        .loadMessageFromTemplate();
-                                                Log.v(TAG, "Messge: "+msg.toJSON().toString(2));
-                                                doSendMessageToTopic(msg);
-                                            } catch (Exception e) {
-                                                e.printStackTrace();
-                                            }
-                                        } else if (pos == 2) {
-                                            MessageTemplateLoader
-                                                    .launchEditor(((GroupListActivity) getActivity())
-                                                            .getApplicationContext());
-                                        }
-                                        ((GroupListActivity) getActivity())
-                                                .dismissDialogByTag("SendMessage");
-                                    }
-                                })
-                        .show(((GroupListActivity) getActivity())
-                                .getSupportFragmentManager(),
-                                "SendMessage");
-            }
-        }
-
-        public static class SendMessageDialogFragment extends DialogFragment {
-
-            public static final String TAG = "ListDialogFragment";
-            ListView listView;
-            OnItemClickListener listener; 
-
-            public static SendMessageDialogFragment newInstance(int listViewLayoutId,
-                    int titleResId, int iconResId, OnItemClickListener listener) {
-                SendMessageDialogFragment frag = new SendMessageDialogFragment();
-                Bundle b = new Bundle();
-                b.putInt("layoutId", listViewLayoutId);
-                b.putInt("titleResId", titleResId);
-                b.putInt("iconResId", iconResId);
-                frag.setArguments(b);
-                frag.listener = listener;
-                return frag;
-            }
-
-            @Override
-            public Dialog onCreateDialog(Bundle savedInstanceState) {
-                int layoutId = getArguments().getInt("layoutId");
-                int titleResId = getArguments().getInt("titleResId");
-                int iconResId = getArguments().getInt("iconResId");
-                LayoutInflater inflater = getActivity().getLayoutInflater();
-                listView = (ListView) inflater
-                        .inflate(layoutId, null);
-                listView.setOnItemClickListener(this.listener);
-
-                return new AlertDialog.Builder(getActivity())
-                        .setIcon(iconResId)
-                        .setTitle(titleResId)
-                        .setView(listView).create();
-            }
-
-        }
-
-
-
-        private void doAddUser() {
-            Log.v(TAG, "doAddUser");
-            GroupListActivity act = (GroupListActivity) getActivity();
-            act.showEditDialog("Input user name",
-                new EditDialogFragment.OnEditDone() {
-                    @Override
-                    public void onEditDone(String input) {
-                        Log.v("onEditDone text: ", input);
-                        if (!TextUtils.isEmpty(input)) {
-                            KiiUser.findUserByUserName(input,
-                                    new KiiUserCallBack() {
-                                        @Override
-                                        public void onFindCompleted(
-                                                int token, KiiUser caller,
-                                                KiiUser found,
-                                                Exception exception) {
-                                            if (found != null) {
-                                                target.addUser(found);
-                                                target.save(new KiiGroupCallBack () {
-                                                    @Override
-                                                    public void onSaveCompleted(
-                                                            int token,
-                                                            KiiGroup group,
-                                                            Exception exception) {
-                                                            ListDialogFragment.this
-                                                                    .dismiss();
-                                                            if (exception != null) {
-                                                                ((GroupListActivity) getActivity())
-                                                                        .showAlertDialog(exception
-                                                                                .getMessage());
-                                                            } else {
-                                                                Toast.makeText(getActivity(), "Add user done.",
-                                                                        Toast.LENGTH_LONG).show();
-                                                            }
-                                                    }
-                                                });
-                                            } else {
-                                                    ListDialogFragment.this
-                                                            .dismiss();
-                                                    ((GroupListActivity) getActivity())
-                                                            .showAlertDialog(exception
-                                                                    .getMessage());
-                                            }
-                                        }
-                                    });
-                        } else {
-                            ListDialogFragment.this.dismiss();
-                        }
-                    }
-                });
-        }
-
-        private void doCreateTopic() {
-            KiiTopic tp = target.topic(Constants.GROUPTOPIC);
-            tp.save(new KiiTopicCallBack() {
-                @Override
-                public void onSaveCompleted(int taskId, KiiTopic target,
-                        Exception e) {
-                    ListDialogFragment.this.dismiss();
-                    if (e != null) {
-                        ((GroupListActivity) getActivity()).showAlertDialog(e
-                                .getMessage());
-                    } else {
-                        Toast.makeText(getActivity(), "Topic created.",
-                                Toast.LENGTH_LONG).show();
-                    }
-                }
-            });
-        }
-
-        private void doSubscribeTopic() {
-            KiiTopic tp = target.topic(Constants.GROUPTOPIC);
-            KiiPushSubscription sub = KiiUser.getCurrentUser()
-                    .pushSubscription();
-            sub.subscribe(tp, new KiiPushCallBack() {
-                @Override
-                public void onSubscribeCompleted(int taskId,
-                        KiiSubscribable target, Exception e) {
-                    ListDialogFragment.this.dismiss();
-                    if (e != null) {
-                        ((GroupListActivity) getActivity()).showAlertDialog(e
-                                .getMessage());
-                    } else {
-                        Toast.makeText(getActivity(), "Subscribe done.",
-                                Toast.LENGTH_LONG).show();
-                    }
-                }
-            });
-        }
-
-        private void doSendMessageToTopic(KiiPushMessage msg) {
-            KiiTopic tp = target.topic(Constants.GROUPTOPIC);
-            tp.sendMessage(msg, new KiiTopicCallBack() {
-
-                @Override
-                public void onSendMessageCompleted(int taskId, KiiTopic target,
-                        KiiPushMessage message, Exception e) {
-                    ListDialogFragment.this.dismiss();
-                    if (e != null) {
-                        ((GroupListActivity) getActivity()).showAlertDialog(e
-                                .getMessage());
-                    } else {
-                        Toast.makeText(getActivity(), "Send message done.",
-                                Toast.LENGTH_LONG).show();
-                    }
-                }
-            });
-        }
-
-    }
-
     class GroupAdapter extends ArrayAdapter<String> {
 
         public GroupAdapter(Context context, int textViewResourceId) {
@@ -462,7 +386,8 @@ public class GroupListActivity extends FragmentActivity implements
     public void dismissDialogByTag(String TAG) {
         DialogFragment df = (DialogFragment) getSupportFragmentManager()
                 .findFragmentByTag(TAG);
-        df.dismiss();
+        if(df != null)
+            df.dismiss();
     }
 
 }
