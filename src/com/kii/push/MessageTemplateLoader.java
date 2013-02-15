@@ -5,16 +5,21 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Iterator;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import com.kii.cloud.storage.KiiPushMessage;
 
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Environment;
+
+import com.kii.cloud.storage.APNSMessage;
+import com.kii.cloud.storage.GCMMessage;
+import com.kii.cloud.storage.KiiPushMessage;
+import com.kii.cloud.storage.KiiPushMessage.Data;
 
 public class MessageTemplateLoader {
 
@@ -51,8 +56,83 @@ public class MessageTemplateLoader {
     public static KiiPushMessage loadMessageFromTemplate() throws IOException,
             JSONException {
         JSONObject obj = loadMessageTemplate();
-        // TODO: implement
-        return null;
+        JSONObject dataJson = obj.getJSONObject("data");
+        JSONObject gcmJson = obj.getJSONObject("gcm");
+        JSONObject apnsJson = obj.getJSONObject("apns");
+        KiiPushMessage message = KiiPushMessage
+                .buildWith(generateData(dataJson))
+                .withAPNSMessage(generateAPNSMessage(apnsJson))
+                .withGCMMessage(generateGCMMessage(gcmJson)).build();
+
+        return message;
+    }
+
+    private static GCMMessage generateGCMMessage(JSONObject json)
+            throws JSONException {
+        GCMMessage.Builder builder = GCMMessage.builder();
+        builder.enable(json.getBoolean("enabled"));
+        if (json.has("deleyWhileIdle")) {
+            builder.delayWhileIdle(json.getBoolean("deleyWhileIdle"));
+        }
+        if (json.has("collapseKey")) {
+            builder.withCollapseKey(json.getString("collapseKey"));
+        }
+        if (json.has("timeToLive")) {
+            builder.withTimeToLive(json.getInt("timeToLive"));
+        }
+        if (json.has("restrictedPackageName")) {
+            builder.withRestrictedPackageName(json
+                    .getString("restrictedPackageName"));
+        }
+        if (json.has("dryRun")) {
+            builder.delayWhileIdle(json.getBoolean("dryRun"));
+        }
+        if (json.has("data")) {
+            builder.withData(generateData(json.getJSONObject("data")));
+        }
+
+        return builder.build();
+    }
+
+    private static APNSMessage generateAPNSMessage(JSONObject json)
+            throws JSONException {
+        APNSMessage.Builder builder = APNSMessage.builder();
+        builder.enable(json.getBoolean("enabled"));
+        if (json.has("sound")) {
+            builder.withSound(json.getString("sound"));
+        }
+        if (json.has("badge")) {
+            builder.withBadge(json.getInt("badge"));
+        }
+        if (json.has("alert")) {
+            JSONObject alertJson = json.getJSONObject("alert");
+            if (alertJson.has("body"))
+                builder.withAlertBody(alertJson.getString("body"));
+            if (alertJson.has("actionLocKey"))
+                builder.withAlertActionLocKey(alertJson
+                        .getString("actionLocKey"));
+            if (alertJson.has("locKey"))
+                builder.withAlertLocKey(alertJson.getString("locKey"));
+            if (alertJson.has("locArgs")) {
+                JSONArray array = alertJson.getJSONArray("locArgs");
+                String[] strArray = new String[array.length()];
+                for (int i = 0; i < array.length(); i++) {
+                    strArray[i] = array.getString(i);
+                }
+                builder.withAlertLocArgs(strArray);
+            }
+        }
+        return builder.build();
+    }
+
+    private static Data generateData(JSONObject json) throws JSONException {
+        KiiPushMessage.Data data = new KiiPushMessage.Data();
+        Iterator it = json.keys();
+        while (it.hasNext()) {
+            String key = (String) it.next();
+            data.put(key, json.getString(key));
+        }
+        return data;
     }
 
     public static void launchEditor(Context ctx) {

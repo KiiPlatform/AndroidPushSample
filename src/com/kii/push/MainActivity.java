@@ -22,6 +22,7 @@ import android.widget.Toast;
 
 import com.google.android.gcm.GCMRegistrar;
 import com.kii.cloud.storage.Kii;
+import com.kii.cloud.storage.KiiPushMessage;
 
 public class MainActivity extends FragmentActivity implements OnItemClickListener{
     private static final String TAG = "KiiPush";
@@ -86,19 +87,29 @@ public class MainActivity extends FragmentActivity implements OnItemClickListene
                         public void onItemClick(AdapterView<?> parent,
                                 View view, int pos, long id) {
                             if (pos == 0) {
+                              KiiPushMessage.Data data = new KiiPushMessage.Data();
+                              data.put("custom_message", "Hello, Kii Push servce!");
+                              KiiPushMessage msg = KiiPushMessage.buildWith(data).build();
                                 new KiiPushAppTask(
                                         (int) KiiPushAppTask.MENU_ID.SENDMESSAGE_TO_USCOPE_TOPIC,
-                                        item, MainActivity.this).execute();
+                                        item, MainActivity.this).execute(msg);
                             } else if (pos == 1) {
-                                // TODO: implement.
                                 // Load message by MessageTemplateLoader and send it.
+                                try {
+                                KiiPushMessage message = MessageTemplateLoader.loadMessageFromTemplate();
+                                new KiiPushAppTask(
+                                        (int) KiiPushAppTask.MENU_ID.SENDMESSAGE_TO_USCOPE_TOPIC,
+                                        item, MainActivity.this).execute(message);
+                                }catch(Exception e) {
+                                    e.printStackTrace();
+                                }
                             } else if (pos == 2) {
                                 MessageTemplateLoader
                                         .launchEditor(getApplicationContext());
                             }
                             dismissDialogByTag(ListDialogFragment.TAG);
                         }
-                    });
+                    }).show(getSupportFragmentManager(), ListDialogFragment.TAG);
         } else {
             new KiiPushAppTask((int)id, item, this).execute();
         }
