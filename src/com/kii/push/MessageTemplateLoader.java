@@ -141,6 +141,7 @@ public class MessageTemplateLoader {
         i.setDataAndType(Uri.fromFile(templateFile),
                 "text/plain");
         i.putExtra(Intent.ACTION_VIEW, i.getDataString());
+        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         ctx.startActivity(i);
     }
 

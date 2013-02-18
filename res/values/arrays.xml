@@ -32,7 +32,7 @@
     </string-array>
 
     <string-array name="filebucket_push_menu">
-        <item>File Bucket Controll</item>
+        <item>File Bucket Controll>></item>
         <item>Subscribe File Bucket</item>
     </string-array>
 
@@ -51,6 +51,26 @@
         <item>Send default message</item>
         <item>Send message with template file</item>
         <item>Edit template file</item>
+    </string-array>
+
+    <string-array name="gcm_menu">
+        <item>@string/install</item>
+        <item>@string/unregister_gcm</item>
+    </string-array>
+
+    <string-array name="bucket_menu">
+        <item>@string/bucket_control</item>
+        <item>@string/subscribe</item>
+        <item>@string/unsubscribe</item>
+        <item>@string/subscribe_ascope_bucket</item>
+    </string-array>
+
+    <string-array name="topic_menu">
+        <item>@string/create_uscope_topic</item>
+        <item>@string/subscribe_uscope_topic</item>
+        <item>@string/sendmessage_to_uscope_topic</item>
+        <item>@string/group_topic</item>
+        <item>@string/subscribe_ascope_topic</item>
     </string-array>
 
 </resources>

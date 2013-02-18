@@ -135,11 +135,6 @@ public class MainActivity extends FragmentActivity implements OnItemClickListene
             Intent intent = new Intent(this, SettingActivity.class);
             startActivity(intent);
             return true;
-        case R.id.options_file_bucket_push:
-            // TODO: implement tab host.
-            Intent i = new Intent(this, FileBucketPushActivity.class);
-            startActivity(i);
-            return true;
         case R.id.options_exit:
             mActivity = (Activity) this;
             if (!mActivity.isFinishing()) {
