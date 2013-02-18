@@ -8,6 +8,7 @@ import ConfigParser
 import logging
 import httplib
 import json
+import time
 
 CONFIG_FILE = 'setting.ini'
 
@@ -137,7 +138,8 @@ class ApiHelper(object):
         headers['authorization'] = 'Bearer ' + self.token
         headers['content-type'] =\
             'application/vnd.kii.SendPushMessageRequest+json'
-        pushData = {'hello app topic push': self.message}
+        pushData = {'hello app topic push': self.message,\
+            'identifier':time.time()}
         gcm = {'enabled': True}
         apns = {'enabled': True}
         body = {'data': pushData, 'gcm': gcm, 'apns': apns}

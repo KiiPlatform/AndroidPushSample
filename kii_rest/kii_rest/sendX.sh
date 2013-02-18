@@ -3,5 +3,5 @@ do
     python sendmessage.py
     echo $i times done
     echo time: `date +%s`
-    sleep 5
+    sleep 2
 done

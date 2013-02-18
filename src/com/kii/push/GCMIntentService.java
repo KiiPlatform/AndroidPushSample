@@ -28,8 +28,7 @@ public class GCMIntentService extends GCMBaseIntentService {
     }
 
     public GCMIntentService() {
-//        super(SENDERID == null ? "" : SENDERID);
-        super();
+        super(SENDERID);
     }
 
     
