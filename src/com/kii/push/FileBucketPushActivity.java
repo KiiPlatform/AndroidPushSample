@@ -94,11 +94,8 @@ public class FileBucketPushActivity extends FragmentActivity implements
                             doUpdateFileACL(); 
                         } else if(pos == 6) {
                             doRestoreFileFromTrash();
-                        }
-                        else {
-                            Toast.makeText(getApplicationContext(),
-                                    "unknown option.", Toast.LENGTH_LONG)
-                                    .show();
+                        } else {
+                            throw new RuntimeException("Unknown Error!");
                         }
                         dismissDialogByTag(ListDialogFragment.TAG);
                     }
@@ -154,6 +151,13 @@ public class FileBucketPushActivity extends FragmentActivity implements
                     Toast.LENGTH_LONG).show();
             return;
         }
+        File file = new File(Environment.getExternalStorageDirectory(),
+                FILE_PATH);
+        try {
+            writeFile(file, "content=" + System.currentTimeMillis());
+        } catch (IOException ioe) {
+            showAlertDialog(ioe.getMessage());
+        }
         mFile.save(new KiiFileCallBack() {
             @Override
             public void onSaveCompleted(int token,
@@ -162,11 +166,11 @@ public class FileBucketPushActivity extends FragmentActivity implements
                     showAlertDialog(exception.getMessage());
                 } else {
                     Toast.makeText(getApplicationContext(),
-                            "update meta-data suceeded",
+                            "file body update suceeded",
                             Toast.LENGTH_LONG).show();
                 }
             }
-        }, getFile());
+        }, file);
     }
 
     private void doDeleteFile() {
@@ -272,28 +276,18 @@ public class FileBucketPushActivity extends FragmentActivity implements
         df.dismiss();
     }
  
-    private File getFile() {
-        File file = new File(Environment.getExternalStorageDirectory(),
-                FILE_PATH);
+    private void writeFile(File file, String content)  throws IOException {
         BufferedWriter bw = null;
         try {
             if (!file.exists()) {
                 file.createNewFile();
             }
-            bw = new BufferedWriter(new FileWriter(file, true));
-            bw.write("hogehoge" + System.currentTimeMillis());
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
+            bw = new BufferedWriter(new FileWriter(file));
+            bw.write(content);
         } finally {
-            if (bw != null) {
-                try {
-                    bw.close();
-                } catch (IOException ioe) {
-                    ioe.printStackTrace();
-                }
-            }
+            if (bw != null)
+                bw.close();
         }
-        return file;
     }
 
 
