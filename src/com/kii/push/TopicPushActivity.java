@@ -38,8 +38,6 @@ public class TopicPushActivity extends FragmentActivity implements
         } else if (pos == 4) {
             new KiiPushAppTask(KiiPushAppTask.MENU_ID.SUBSCRIBE_ASCOPE_TOPIC,
                     getString(R.string.subscribe_ascope_topic), this).execute();
-        } else {
-            throw new RuntimeException("Unknown error!");
         }
     }
 

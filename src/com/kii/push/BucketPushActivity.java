@@ -34,8 +34,6 @@ public class BucketPushActivity extends FragmentActivity implements
             new KiiPushAppTask(KiiPushAppTask.MENU_ID.SUBSCRIBE_ABUCKET,
                     getString(R.string.subscribe_ascope_bucket), this)
                     .execute();
-        } else {
-            throw new RuntimeException("Unknown error!");
         }
     }
 

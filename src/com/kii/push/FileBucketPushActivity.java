@@ -94,8 +94,6 @@ public class FileBucketPushActivity extends FragmentActivity implements
                             doUpdateFileACL(); 
                         } else if(pos == 6) {
                             doRestoreFileFromTrash();
-                        } else {
-                            throw new RuntimeException("Unknown Error!");
                         }
                         dismissDialogByTag(ListDialogFragment.TAG);
                     }
