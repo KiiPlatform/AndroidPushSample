@@ -30,6 +30,7 @@ class ApiHelper(object):
         self.host = conf.get('app', 'host')
         self.gcmAppKey = conf.get('app', 'gcm-app-key')
         self.clientId = conf.get('app', 'client-id')
+        self.setCollapseKey=conf.get('app', 'set-collapse-key')
         self.clientSecret = conf.get('app', 'client-secret')
         self.appTopic = conf.get('constants', 'app-topic-name')
         self.message = conf.get('constants', 'push-message')
@@ -168,6 +169,21 @@ class ApiHelper(object):
         self.logger.debug("status: %d", response.status)
         self.logger.debug("body: %s", json.load(response))
 
+    def configureCollapseKey(self):
+        self.logger.debug('configure collapse key')
+        conn = httplib.HTTPConnection(self.host)
+        path = '/api/apps/{0}/'.format(self.appId, self.appBucket)
+        headers = {'x-kii-appid': self.appId, 'x-kii-appkey': self.appKey}
+        headers['authorization'] = 'Bearer ' + self.token
+        headers['content-type'] = 'application/vnd.kii.AppModificationRequest+json'
+        obj = {'gcmCollapseKeyDefaultBehavior':self.setCollapseKey}
+        jsonObj = json.dumps(obj)
+        self.logger.debug('path: %s', path)
+        self.logger.debug('data %s', jsonObj)
+        conn.request('POST', path, jsonObj, headers)
+        response = conn.getresponse()
+        self.logger.debug("status: %d", response.status)
+
 if __name__ == '__main__':
     helper = ApiHelper()
     helper.removeGCMKey()
@@ -176,5 +192,6 @@ if __name__ == '__main__':
     helper.createAppTopic()
     helper.grantSubscriptionOfAppTopic()
     helper.createAppBucketObject()
+    helper.configureCollapseKey()
 
 
