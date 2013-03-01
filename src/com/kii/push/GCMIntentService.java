@@ -22,13 +22,9 @@ import com.google.android.gcm.GCMBaseIntentService;
 public class GCMIntentService extends GCMBaseIntentService {
 
     private static final String TAG = "GCMIntentService";
-    private static String SENDERID;
-    static {
-        SENDERID = PropertyManager.getInstance().getGCMSenderId();
-    }
 
     public GCMIntentService() {
-        super(SENDERID);
+        super(Constants.GCM_SENDER_ID);
     }
 
     

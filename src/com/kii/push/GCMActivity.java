@@ -46,9 +46,8 @@ public class GCMActivity extends FragmentActivity implements
                     .getApplicationContext());
             Log.i(TAG, "regId: " + regId);
             if (TextUtils.isEmpty(regId)) {
-                PropertyManager pm = PropertyManager.getInstance(); 
                 GCMRegistrar.register(this.getApplicationContext(),
-                        pm.getGCMSenderId());
+                        Constants.GCM_SENDER_ID);
             } else {
                 new KiiPushAppTask(KiiPushAppTask.MENU_ID.INSTALL_PUSH,
                         getString(R.string.install_push), this).execute(regId);
