@@ -59,11 +59,23 @@ public class MessageTemplateLoader {
         JSONObject dataJson = obj.getJSONObject("data");
         JSONObject gcmJson = obj.getJSONObject("gcm");
         JSONObject apnsJson = obj.getJSONObject("apns");
-        KiiPushMessage message = KiiPushMessage
+        KiiPushMessage.Builder builder = KiiPushMessage
                 .buildWith(generateData(dataJson))
                 .withAPNSMessage(generateAPNSMessage(apnsJson))
-                .withGCMMessage(generateGCMMessage(gcmJson)).build();
-
+                .withGCMMessage(generateGCMMessage(gcmJson));
+        if (obj.has("sendTopicID"))
+            builder.sendTopicId(obj.getBoolean("sendTopicID"));
+        if (obj.has("sendWhen"))
+            builder.sendWhen(obj.getBoolean("sendWhen"));
+        if (obj.has("sendOrigin"))
+            builder.sendOrigin(obj.getBoolean("sendOrigin"));
+        if (obj.has("sendObjectScope"))
+            builder.sendObjectScope(obj.getBoolean("sendObjectScope"));
+        if (obj.has("sendSender"))
+            builder.sendSender(obj.getBoolean("sendSender"));
+        if (obj.has("sendAppID"))
+            builder.sendAppID(obj.getBoolean("sendAppID"));
+        KiiPushMessage message = builder.build();
         return message;
     }
 
@@ -141,6 +153,7 @@ public class MessageTemplateLoader {
         i.setDataAndType(Uri.fromFile(templateFile),
                 "text/plain");
         i.putExtra(Intent.ACTION_VIEW, i.getDataString());
+        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         ctx.startActivity(i);
     }
 
