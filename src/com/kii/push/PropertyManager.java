@@ -79,11 +79,4 @@ public class PropertyManager {
         return value;
     }
 
-    public String getGCMSenderId() {
-        Properties p = System.getProperties();
-        String value =  p.getProperty("gcm-sender-id");
-        Log.v(TAG, "GCM sender id: " + value);
-        return value;
-    }
-
 }
