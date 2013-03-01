@@ -1,11 +1,14 @@
 package com.kii.push;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 public class ListDialogFragment extends DialogFragment {
@@ -15,14 +18,14 @@ public class ListDialogFragment extends DialogFragment {
     OnItemClickListener listener; 
 
     public static ListDialogFragment newInstance(int listViewLayoutId,
-            int titleResId, int iconResId, OnItemClickListener listener) {
+            int titleResId, int iconResId, int requestId) {
         ListDialogFragment frag = new ListDialogFragment();
         Bundle b = new Bundle();
         b.putInt("layoutId", listViewLayoutId);
         b.putInt("titleResId", titleResId);
         b.putInt("iconResId", iconResId);
+        b.putInt("requestId", requestId);
         frag.setArguments(b);
-        frag.listener = listener;
         return frag;
     }
 
@@ -31,10 +34,21 @@ public class ListDialogFragment extends DialogFragment {
         int layoutId = getArguments().getInt("layoutId");
         int titleResId = getArguments().getInt("titleResId");
         int iconResId = getArguments().getInt("iconResId");
+        final int requestId = getArguments().getInt("requestId");
         LayoutInflater inflater = getActivity().getLayoutInflater();
         listView = (ListView) inflater
                 .inflate(layoutId, null);
-        listView.setOnItemClickListener(this.listener);
+        listView.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int pos,
+                    long id) {
+                Activity ac = getActivity();
+                if (ac != null) {
+                    ((ListDialogFragmentCallback) ac).onListDialogItemClicked(
+                            parent, view, pos, id, requestId);
+                }
+            }
+        });
 
         return new AlertDialog.Builder(getActivity())
                 .setIcon(iconResId)
@@ -42,4 +56,8 @@ public class ListDialogFragment extends DialogFragment {
                 .setView(listView).create();
     }
 
+    public interface ListDialogFragmentCallback {
+        public void onListDialogItemClicked(AdapterView<?> parent, View view, int pos,
+                long id, int requestId);
+    }
 }

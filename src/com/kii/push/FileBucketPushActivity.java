@@ -27,9 +27,10 @@ import com.kii.cloud.storage.KiiUser;
 import com.kii.cloud.storage.callback.KiiACLCallBack;
 import com.kii.cloud.storage.callback.KiiFileCallBack;
 import com.kii.cloud.storage.callback.KiiPushCallBack;
+import com.kii.push.ListDialogFragment.ListDialogFragmentCallback;
 
 public class FileBucketPushActivity extends FragmentActivity implements
-        OnItemClickListener {
+        OnItemClickListener, ListDialogFragmentCallback {
 
     private static final String FILE_BUCKET_NAME = "testFileBucket";
     private static final String FILE_PATH = "com.kii.push/test_file.txt";
@@ -76,28 +77,7 @@ public class FileBucketPushActivity extends FragmentActivity implements
     private void showListDialog() {
         ListDialogFragment frag = ListDialogFragment.newInstance(
                 R.layout.file_con_listdialog, R.string.file_bucket_controll,
-                android.R.drawable.ic_menu_edit, new OnItemClickListener(){
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view,
-                            int pos, long id) {
-                        if (pos == 0 ) { // Create file in bucket.
-                            doCreateFile();
-                        } else if(pos == 1) {
-                            doUpdateFileMetaData();
-                        } else if(pos == 2) {
-                            doUpdateFileBody();
-                        } else if(pos == 3) {
-                            doDeleteFile();
-                        } else if(pos == 4) {
-                            doMoveFileToTrash();
-                        } else if(pos == 5) {
-                            doUpdateFileACL(); 
-                        } else if(pos == 6) {
-                            doRestoreFileFromTrash();
-                        }
-                        dismissDialogByTag(ListDialogFragment.TAG);
-                    }
-                });
+                android.R.drawable.ic_menu_edit, 0);
         frag.show(this.getSupportFragmentManager(), ListDialogFragment.TAG);
     }
 
@@ -285,6 +265,29 @@ public class FileBucketPushActivity extends FragmentActivity implements
         } finally {
             if (bw != null)
                 bw.close();
+        }
+    }
+
+    @Override
+    public void onListDialogItemClicked(AdapterView<?> parent, View view,
+            int pos, long id, int requestId) {
+        if (requestId == 0) {
+            if (pos == 0) { // Create file in bucket.
+                doCreateFile();
+            } else if (pos == 1) {
+                doUpdateFileMetaData();
+            } else if (pos == 2) {
+                doUpdateFileBody();
+            } else if (pos == 3) {
+                doDeleteFile();
+            } else if (pos == 4) {
+                doMoveFileToTrash();
+            } else if (pos == 5) {
+                doUpdateFileACL();
+            } else if (pos == 6) {
+                doRestoreFileFromTrash();
+            }
+            dismissDialogByTag(ListDialogFragment.TAG);
         }
     }
 

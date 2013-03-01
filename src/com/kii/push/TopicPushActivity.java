@@ -10,9 +10,10 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
 import com.kii.cloud.storage.KiiPushMessage;
+import com.kii.push.ListDialogFragment.ListDialogFragmentCallback;
 
 public class TopicPushActivity extends FragmentActivity implements
-        OnItemClickListener {
+        OnItemClickListener, ListDialogFragmentCallback {
 
     @Override
     protected void onCreate(Bundle arg0) {
@@ -42,47 +43,44 @@ public class TopicPushActivity extends FragmentActivity implements
     }
 
     private void showSendMessageListDialog() {
-        final String item = getString(R.string.sendmessage_to_uscope_topic);
         ListDialogFragment.newInstance(R.layout.sendmessage_listdialog,
-                R.string.send_message, android.R.drawable.ic_menu_edit,
-                new OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view,
-                            int pos, long id) {
-                        if (pos == 0) {
-                            KiiPushMessage.Data data = new KiiPushMessage.Data();
-                            data.put("custom_message",
-                                    "Hello, Kii Push servce!");
-                            KiiPushMessage msg = KiiPushMessage.buildWith(data)
-                                    .build();
-                            new KiiPushAppTask(
-                                    (int) KiiPushAppTask.MENU_ID.SENDMESSAGE_TO_USCOPE_TOPIC,
-                                    item, TopicPushActivity.this).execute(msg);
-                        } else if (pos == 1) {
-                            // Load message by MessageTemplateLoader and send.
-                            try {
-                                KiiPushMessage message = MessageTemplateLoader
-                                        .loadMessageFromTemplate();
-                                new KiiPushAppTask(
-                                        (int) KiiPushAppTask.MENU_ID.SENDMESSAGE_TO_USCOPE_TOPIC,
-                                        item, TopicPushActivity.this)
-                                        .execute(message);
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        } else if (pos == 2) {
-                            MessageTemplateLoader
-                                    .launchEditor(getApplicationContext());
-                        }
-                        dismissDialogByTag("SendMessage");
-                    }
-                }).show(getSupportFragmentManager(), "SendMessage");
+                R.string.send_message, android.R.drawable.ic_menu_edit, 0
+                ).show(getSupportFragmentManager(), "SendMessage");
     }
 
     private void dismissDialogByTag(String tag) {
         DialogFragment df = (DialogFragment) getSupportFragmentManager()
                 .findFragmentByTag(tag);
         df.dismiss();
+    }
+
+    @Override
+    public void onListDialogItemClicked(AdapterView<?> parent, View view,
+            int pos, long id, int requestId) {
+        if (pos == 0) {
+            KiiPushMessage.Data data = new KiiPushMessage.Data();
+            data.put("custom_message", "Hello, Kii Push servce!");
+            KiiPushMessage msg = KiiPushMessage.buildWith(data).build();
+            new KiiPushAppTask(
+                    (int) KiiPushAppTask.MENU_ID.SENDMESSAGE_TO_USCOPE_TOPIC,
+                    getString(R.string.sendmessage_to_uscope_topic),
+                    TopicPushActivity.this).execute(msg);
+        } else if (pos == 1) {
+            // Load message by MessageTemplateLoader and send.
+            try {
+                KiiPushMessage message = MessageTemplateLoader
+                        .loadMessageFromTemplate();
+                new KiiPushAppTask(
+                        (int) KiiPushAppTask.MENU_ID.SENDMESSAGE_TO_USCOPE_TOPIC,
+                        getString(R.string.sendmessage_to_uscope_topic),
+                        TopicPushActivity.this).execute(message);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else if (pos == 2) {
+            MessageTemplateLoader.launchEditor(getApplicationContext());
+        }
+        dismissDialogByTag("SendMessage");
     }
 
 }
