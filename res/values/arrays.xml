@@ -43,8 +43,7 @@
         <item>Delete File</item>
         <item>Move File to Trash</item>
         <item>Update File ACL</item>
-        <item>Update Bucket ACL</item>
-        <item>Delete Bucket</item>
+        <item>Restore File From Trash</item>
     </string-array>
 
     <string-array name="send_push_menu">
