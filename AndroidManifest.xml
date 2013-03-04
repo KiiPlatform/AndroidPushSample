@@ -50,10 +50,10 @@
         <activity android:name=".ShowPushMessageActivity" android:label="@string/pushmessage_detail" />
         <activity android:name=".SettingActivity" android:label="@string/settings" />
         <activity android:name=".GroupListActivity" android:label="@string/groups" />
-        <activity android:name=".FileBucketPushActivity" android:label="@string/file_activity" />
-        <activity android:name=".GCMActivity" android:label="@string/gcm" />
-        <activity android:name=".BucketPushActivity" android:label="@string/bucket" />
-        <activity android:name=".TopicPushActivity" android:label="@string/topic" />
+        <activity android:name="com.kii.push.FileBucketPushFragment" android:label="@string/file_activity" />
+        <activity android:name="com.kii.push.GCMFragment" android:label="@string/gcm" />
+        <activity android:name="com.kii.push.BucketPushFragment" android:label="@string/bucket" />
+        <activity android:name="com.kii.push.TopicPushFragment" android:label="@string/topic" />
 
         <receiver
             android:name="com.google.android.gcm.GCMBroadcastReceiver"

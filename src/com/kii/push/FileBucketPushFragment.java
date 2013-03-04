@@ -8,8 +8,10 @@ import java.io.IOException;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
@@ -29,19 +31,27 @@ import com.kii.cloud.storage.callback.KiiFileCallBack;
 import com.kii.cloud.storage.callback.KiiPushCallBack;
 import com.kii.push.ListDialogFragment.ListDialogFragmentCallback;
 
-public class FileBucketPushActivity extends FragmentActivity implements
+public class FileBucketPushFragment extends Fragment implements
         OnItemClickListener, ListDialogFragmentCallback {
+
 
     private static final String FILE_BUCKET_NAME = "testFileBucket";
     private static final String FILE_PATH = "com.kii.push/test_file.txt";
     private KiiFile mFile = null;
 
+
     @Override
-    protected void onCreate(Bundle arg0) {
-        super.onCreate(arg0);
-        setContentView(R.layout.filebucketpush);
-        ListView lv = (ListView) findViewById(R.id.filebucket_push_list);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+            Bundle savedInstanceState) {
+        View v = inflater.inflate(R.layout.filebucketpush, container, false);
+        ListView lv = (ListView) v.findViewById(R.id.filebucket_push_list);
         lv.setOnItemClickListener(this);
+        return v;
+    }
+
+    @Override
+    public void onCreate(Bundle arg0) {
+        super.onCreate(arg0);
     }
 
     @Override
@@ -58,7 +68,7 @@ public class FileBucketPushActivity extends FragmentActivity implements
                             if (e != null) {
                                 showAlertDialog(e.getMessage());
                             } else {
-                                Toast.makeText(getApplicationContext(),
+                                Toast.makeText(getActivity(),
                                         "Subscribe succeeded",
                                         Toast.LENGTH_LONG).show();
                             }
@@ -70,7 +80,7 @@ public class FileBucketPushActivity extends FragmentActivity implements
     private void showAlertDialog(String message) {
         DialogFragment newFragment = AlertDialogFragment
                 .newInstance(android.R.string.dialog_alert_title, message);
-        newFragment.show(this.getSupportFragmentManager(),
+        newFragment.show(this.getActivity().getSupportFragmentManager(),
                 AlertDialogFragment.TAG);
     }
 
@@ -78,7 +88,9 @@ public class FileBucketPushActivity extends FragmentActivity implements
         ListDialogFragment frag = ListDialogFragment.newInstance(
                 R.layout.file_con_listdialog, R.string.file_bucket_controll,
                 android.R.drawable.ic_menu_edit, 0);
-        frag.show(this.getSupportFragmentManager(), ListDialogFragment.TAG);
+        frag.setTargetFragment(this, 0);
+        frag.show(this.getActivity().getSupportFragmentManager(),
+                ListDialogFragment.TAG);
     }
 
     private void doCreateFile() {
@@ -91,7 +103,7 @@ public class FileBucketPushActivity extends FragmentActivity implements
                     // TODO: impl progress.
                     showAlertDialog(exception.getMessage());
                 } else {
-                    Toast.makeText(getApplicationContext(),
+                    Toast.makeText(getActivity(),
                             "Create file suceeded",
                             Toast.LENGTH_LONG).show();
                 }
@@ -101,7 +113,7 @@ public class FileBucketPushActivity extends FragmentActivity implements
 
     private void doUpdateFileMetaData() {
         if(mFile == null) {
-            Toast.makeText(getApplicationContext(),
+            Toast.makeText(getActivity(),
                     "File is not created yet.",
                     Toast.LENGTH_LONG).show();
             return;
@@ -114,7 +126,7 @@ public class FileBucketPushActivity extends FragmentActivity implements
                 if (exception != null) {
                     showAlertDialog(exception.getMessage());
                 } else {
-                    Toast.makeText(getApplicationContext(),
+                    Toast.makeText(getActivity(),
                             "update meta-data suceeded",
                             Toast.LENGTH_LONG).show();
                 }
@@ -124,7 +136,7 @@ public class FileBucketPushActivity extends FragmentActivity implements
 
     private void doUpdateFileBody() {
         if(mFile == null) {
-            Toast.makeText(getApplicationContext(),
+            Toast.makeText(getActivity(),
                     "File is not created yet.",
                     Toast.LENGTH_LONG).show();
             return;
@@ -143,7 +155,7 @@ public class FileBucketPushActivity extends FragmentActivity implements
                 if (exception != null) {
                     showAlertDialog(exception.getMessage());
                 } else {
-                    Toast.makeText(getApplicationContext(),
+                    Toast.makeText(getActivity(),
                             "file body update suceeded",
                             Toast.LENGTH_LONG).show();
                 }
@@ -153,7 +165,7 @@ public class FileBucketPushActivity extends FragmentActivity implements
 
     private void doDeleteFile() {
         if(mFile == null) {
-            Toast.makeText(getApplicationContext(),
+            Toast.makeText(getActivity(),
                     "File is not created yet.",
                     Toast.LENGTH_LONG).show();
             return;
@@ -165,7 +177,7 @@ public class FileBucketPushActivity extends FragmentActivity implements
                     showAlertDialog(exception.getMessage());
                 } else {
                     mFile = null;
-                    Toast.makeText(getApplicationContext(),
+                    Toast.makeText(getActivity(),
                             "file delete suceeded",
                             Toast.LENGTH_LONG).show();
                 }
@@ -175,7 +187,7 @@ public class FileBucketPushActivity extends FragmentActivity implements
 
     private void doMoveFileToTrash() {
         if(mFile == null) {
-            Toast.makeText(getApplicationContext(),
+            Toast.makeText(getActivity(),
                     "File is not created yet.",
                     Toast.LENGTH_LONG).show();
             return;
@@ -187,7 +199,7 @@ public class FileBucketPushActivity extends FragmentActivity implements
                 if (exception != null) {
                     showAlertDialog(exception.getMessage());
                 } else {
-                    Toast.makeText(getApplicationContext(),
+                    Toast.makeText(getActivity(),
                             "file move to trash suceeded",
                             Toast.LENGTH_LONG).show();
                 }
@@ -198,7 +210,7 @@ public class FileBucketPushActivity extends FragmentActivity implements
 
     private void doUpdateFileACL() {
         if (mFile == null) {
-            Toast.makeText(getApplicationContext(), "File is not created yet.",
+            Toast.makeText(getActivity(), "File is not created yet.",
                     Toast.LENGTH_LONG).show();
             return;
         }
@@ -214,7 +226,7 @@ public class FileBucketPushActivity extends FragmentActivity implements
                 if (exception != null) {
                     showAlertDialog(exception.getMessage());
                 } else {
-                    Toast.makeText(getApplicationContext(),
+                    Toast.makeText(getActivity(),
                             "file acl change succeeded", Toast.LENGTH_LONG)
                             .show();
                 }
@@ -225,7 +237,7 @@ public class FileBucketPushActivity extends FragmentActivity implements
 
     private void doRestoreFileFromTrash() {
         if(mFile == null) {
-            Toast.makeText(getApplicationContext(),
+            Toast.makeText(getActivity(),
                     "File is not created yet.",
                     Toast.LENGTH_LONG).show();
             return;
@@ -237,7 +249,7 @@ public class FileBucketPushActivity extends FragmentActivity implements
                 if (exception != null) {
                     showAlertDialog(exception.getMessage());
                 } else {
-                    Toast.makeText(getApplicationContext(),
+                    Toast.makeText(getActivity(),
                             "file restore from trash suceeded",
                             Toast.LENGTH_LONG).show();
                 }
@@ -248,9 +260,9 @@ public class FileBucketPushActivity extends FragmentActivity implements
 
 
     private void dismissDialogByTag(String tag) {
-        DialogFragment df = (DialogFragment) FileBucketPushActivity.this
-                .getSupportFragmentManager().findFragmentByTag(
-                        ListDialogFragment.TAG);
+        DialogFragment df = (DialogFragment) FileBucketPushFragment.this
+                .getActivity().getSupportFragmentManager()
+                .findFragmentByTag(ListDialogFragment.TAG);
         df.dismiss();
     }
  

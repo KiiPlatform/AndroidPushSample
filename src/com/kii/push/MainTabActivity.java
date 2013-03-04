@@ -2,20 +2,21 @@ package com.kii.push;
 
 import com.kii.cloud.storage.Kii;
 
-import android.app.TabActivity;
+import android.app.LocalActivityManager;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTabHost;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.TabHost;
 
-public class MainTabActivity extends TabActivity {
+public class MainTabActivity extends FragmentActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.maintab);
+        setContentView(R.layout.maintab_fragment);
         PropertyManager pm = PropertyManager.getInstance();
         pm.load(getApplicationContext());
         PrefWrapper prefs = PrefWrapper.getInstance(this);
@@ -30,29 +31,20 @@ public class MainTabActivity extends TabActivity {
 
     private void initTabs() {
 
-        TabHost host = getTabHost();
-        TabHost.TabSpec spec;
-        Intent i = new Intent().setClass(getApplicationContext(),
-                GCMActivity.class);
-        spec = host.newTabSpec("GCM").setIndicator("GCM").setContent(i);
-        host.addTab(spec);
+        FragmentTabHost host = (FragmentTabHost) findViewById(android.R.id.tabhost);
+        host.setup(this, getSupportFragmentManager(), R.id.realtabcontent);
 
-        Intent i2 = new Intent().setClass(getApplicationContext(),
-                BucketPushActivity.class);
-        spec = host.newTabSpec("Bucket").setIndicator("Bucket").setContent(i2);
-        host.addTab(spec);
+        host.addTab(host.newTabSpec("GCM").setIndicator("GCM"),
+                GCMFragment.class, null);
 
-        Intent i3 = new Intent().setClass(getApplicationContext(),
-                FileBucketPushActivity.class);
-        spec = host.newTabSpec("FileBucket").setIndicator("FileBucket")
-                .setContent(i3);
-        host.addTab(spec);
+        host.addTab(host.newTabSpec("Bucket").setIndicator("Bucket"),
+                BucketPushFragment.class, null);
 
-        Intent i4 = new Intent().setClass(getApplicationContext(),
-                TopicPushActivity.class);
-        spec = host.newTabSpec("Topic").setIndicator("Topic")
-                .setContent(i4);
-        host.addTab(spec);
+        host.addTab(host.newTabSpec("FileBucket").setIndicator("FileBucket"),
+                FileBucketPushFragment.class, null);
+
+        host.addTab(host.newTabSpec("Topic").setIndicator("Topic"),
+                TopicPushFragment.class, null);
     }
 
     @Override
