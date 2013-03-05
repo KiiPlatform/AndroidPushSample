@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView.OnItemClickListener;
@@ -42,10 +43,20 @@ public class ListDialogFragment extends DialogFragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int pos,
                     long id) {
-                Activity ac = getActivity();
-                if (ac != null) {
-                    ((ListDialogFragmentCallback) ac).onListDialogItemClicked(
-                            parent, view, pos, id, requestId);
+
+                ListDialogFragmentCallback lfc = null;
+                Fragment pf = getTargetFragment();
+                if (pf != null) {
+                    lfc = (ListDialogFragmentCallback)pf;
+                } else {
+                    Activity ac = getActivity();
+                    if (ac != null) {
+                        lfc = (ListDialogFragmentCallback)ac;
+                    }
+                }
+                if (lfc != null) {
+                    lfc.onListDialogItemClicked(parent, view, pos, id,
+                            requestId);
                 }
             }
         });

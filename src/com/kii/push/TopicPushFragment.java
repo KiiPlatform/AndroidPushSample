@@ -3,8 +3,10 @@ package com.kii.push;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
@@ -12,44 +14,54 @@ import android.widget.ListView;
 import com.kii.cloud.storage.KiiPushMessage;
 import com.kii.push.ListDialogFragment.ListDialogFragmentCallback;
 
-public class TopicPushActivity extends FragmentActivity implements
+public class TopicPushFragment extends Fragment implements
         OnItemClickListener, ListDialogFragmentCallback {
 
+    
     @Override
-    protected void onCreate(Bundle arg0) {
-        super.onCreate(arg0);
-        setContentView(R.layout.topic_push_list);
-        ListView listView = (ListView) findViewById(R.id.topicListView);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+            Bundle savedInstanceState) {
+        View v = inflater.inflate(R.layout.topic_push_list, container, false);
+        ListView listView = (ListView) v.findViewById(R.id.topicListView);
         listView.setOnItemClickListener(this);
+        return v;
+    }
+
+    @Override
+    public void onCreate(Bundle arg0) {
+        super.onCreate(arg0);
     }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View v, int pos, long id) {
         if (pos == 0) {
             new KiiPushAppTask(KiiPushAppTask.MENU_ID.CREATE_USCOPE_TOPIC,
-                    getString(R.string.create_uscope_topic), this).execute();
+                    getString(R.string.create_uscope_topic), getActivity()).execute();
         } else if (pos == 1) {
             new KiiPushAppTask(KiiPushAppTask.MENU_ID.SUBSCRIBE_USCOPE_TOPIC,
-                    getString(R.string.subscribe_uscope_topic), this).execute();
+                    getString(R.string.subscribe_uscope_topic), getActivity()).execute();
         } else if (pos == 2) {
             showSendMessageListDialog();
         } else if (pos == 3) {
-            Intent intent = new Intent(this, GroupListActivity.class);
+            Intent intent = new Intent(getActivity(), GroupListActivity.class);
             startActivity(intent);
         } else if (pos == 4) {
             new KiiPushAppTask(KiiPushAppTask.MENU_ID.SUBSCRIBE_ASCOPE_TOPIC,
-                    getString(R.string.subscribe_ascope_topic), this).execute();
+                    getString(R.string.subscribe_ascope_topic), getActivity())
+                    .execute();
         }
     }
 
     private void showSendMessageListDialog() {
-        ListDialogFragment.newInstance(R.layout.sendmessage_listdialog,
-                R.string.send_message, android.R.drawable.ic_menu_edit, 0
-                ).show(getSupportFragmentManager(), "SendMessage");
+        ListDialogFragment ldf = ListDialogFragment.newInstance(
+                R.layout.sendmessage_listdialog, R.string.send_message,
+                android.R.drawable.ic_menu_edit, 0);
+        ldf.setTargetFragment(this, 0);
+        ldf.show(getActivity().getSupportFragmentManager(), "SendMessage");
     }
 
     private void dismissDialogByTag(String tag) {
-        DialogFragment df = (DialogFragment) getSupportFragmentManager()
+        DialogFragment df = (DialogFragment) this.getFragmentManager()
                 .findFragmentByTag(tag);
         df.dismiss();
     }
@@ -64,7 +76,7 @@ public class TopicPushActivity extends FragmentActivity implements
             new KiiPushAppTask(
                     (int) KiiPushAppTask.MENU_ID.SENDMESSAGE_TO_USCOPE_TOPIC,
                     getString(R.string.sendmessage_to_uscope_topic),
-                    TopicPushActivity.this).execute(msg);
+                    getActivity()).execute(msg);
         } else if (pos == 1) {
             // Load message by MessageTemplateLoader and send.
             try {
@@ -73,12 +85,12 @@ public class TopicPushActivity extends FragmentActivity implements
                 new KiiPushAppTask(
                         (int) KiiPushAppTask.MENU_ID.SENDMESSAGE_TO_USCOPE_TOPIC,
                         getString(R.string.sendmessage_to_uscope_topic),
-                        TopicPushActivity.this).execute(message);
+                        getActivity()).execute(message);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         } else if (pos == 2) {
-            MessageTemplateLoader.launchEditor(getApplicationContext());
+            MessageTemplateLoader.launchEditor(getActivity());
         }
         dismissDialogByTag("SendMessage");
     }
