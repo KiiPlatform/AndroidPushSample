@@ -260,8 +260,7 @@ public class FileBucketPushFragment extends Fragment implements
 
 
     private void dismissDialogByTag(String tag) {
-        DialogFragment df = (DialogFragment) FileBucketPushFragment.this
-                .getActivity().getSupportFragmentManager()
+        DialogFragment df = (DialogFragment) this.getFragmentManager()
                 .findFragmentByTag(ListDialogFragment.TAG);
         df.dismiss();
     }

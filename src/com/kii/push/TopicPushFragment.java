@@ -61,8 +61,8 @@ public class TopicPushFragment extends Fragment implements
     }
 
     private void dismissDialogByTag(String tag) {
-        DialogFragment df = (DialogFragment) getActivity()
-                .getSupportFragmentManager().findFragmentByTag(tag);
+        DialogFragment df = (DialogFragment) this.getFragmentManager()
+                .findFragmentByTag(tag);
         df.dismiss();
     }
 
