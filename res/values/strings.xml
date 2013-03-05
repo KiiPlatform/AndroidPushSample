@@ -55,4 +55,5 @@
     <string name="gcm">GCM</string>
     <string name="bucket">Bucket</string>
     <string name="topic">Topic</string>
+    <string name="operation_failed">Operation failed</string>
 </resources>

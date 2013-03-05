@@ -16,16 +16,12 @@ import com.kii.cloud.storage.callback.KiiUserCallBack;
 import com.kii.push.EditDialogFragment.EditDialogFragmentCallback;
 import com.kii.push.ListDialogFragment.ListDialogFragmentCallback;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
@@ -33,7 +29,6 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -62,10 +57,22 @@ public class GroupListActivity extends FragmentActivity implements
         loadGroups();
     }
 
+    private void showProgressDialog() {
+        ProgressDialogFragment pdf = ProgressDialogFragment.newInstance();
+        pdf.show(this.getSupportFragmentManager(), ProgressDialogFragment.TAG);
+    }
+
+    private void dismissProgressDiallog() {
+        ProgressDialogFragment pdf = (ProgressDialogFragment) this
+                .getSupportFragmentManager().findFragmentByTag(
+                        ProgressDialogFragment.TAG);
+        pdf.dismiss();
+    }
+
     private void showAlertDialog(String message) {
-        DialogFragment newFragment = MyAlertDialogFragment
-                .newInstance(android.R.string.dialog_alert_title, message);
-        newFragment.show(this.getSupportFragmentManager(), "dialog");
+        DialogFragment newFragment = AlertDialogFragment.newInstance(
+                android.R.string.dialog_alert_title, message);
+        newFragment.show(this.getSupportFragmentManager(), AlertDialogFragment.TAG);
     }
 
 
@@ -89,11 +96,13 @@ public class GroupListActivity extends FragmentActivity implements
 
     private void doSendMessageToTopic(KiiGroup target, KiiPushMessage msg) {
         KiiTopic tp = target.topic(Constants.GROUPTOPIC);
+        showProgressDialog();
         tp.sendMessage(msg, new KiiTopicCallBack() {
 
             @Override
             public void onSendMessageCompleted(int taskId, KiiTopic target,
                     KiiPushMessage message, Exception e) {
+                dismissProgressDiallog();
                 if (e != null) {
                     GroupListActivity.this.showAlertDialog(e.getMessage());
                 } else {
@@ -111,9 +120,11 @@ public class GroupListActivity extends FragmentActivity implements
 
     private void doCreateTopic(final KiiGroup target) {
         KiiTopic tp = target.topic(Constants.GROUPTOPIC);
+        showProgressDialog();
         tp.save(new KiiTopicCallBack() {
             @Override
             public void onSaveCompleted(int taskId, KiiTopic target, Exception e) {
+                dismissProgressDiallog();
                 dismissDialogByTag("listdialog");
                 if (e != null) {
                     GroupListActivity.this.showAlertDialog(e.getMessage());
@@ -128,10 +139,12 @@ public class GroupListActivity extends FragmentActivity implements
     private void doSubscribeTopic(final KiiGroup target) {
         KiiTopic tp = target.topic(Constants.GROUPTOPIC);
         KiiPushSubscription sub = KiiUser.getCurrentUser().pushSubscription();
+        showProgressDialog();
         sub.subscribe(tp, new KiiPushCallBack() {
             @Override
             public void onSubscribeCompleted(int taskId,
                     KiiSubscribable target, Exception e) {
+                dismissProgressDiallog();
                 dismissDialogByTag("listdialog");
                 if (e != null) {
                     GroupListActivity.this.showAlertDialog(e.getMessage());
@@ -147,10 +160,12 @@ public class GroupListActivity extends FragmentActivity implements
         KiiUser currentUser = Kii.user();
         if (currentUser == null)
             return;
+        showProgressDialog();
         currentUser.memberOfGroups(new KiiUserCallBack() {
             @Override
             public void onMemberOfGroupsCompleted(int token, KiiUser user,
                     List<KiiGroup> groupList, Exception exception) {
+                dismissProgressDiallog();
                 GroupListActivity.this
                         .setProgressBarIndeterminateVisibility(false);
                 if (exception == null) {
@@ -164,37 +179,6 @@ public class GroupListActivity extends FragmentActivity implements
                 }
             }
         });
-    }
-
-    public static class MyAlertDialogFragment extends DialogFragment {
-
-        public static MyAlertDialogFragment newInstance(int title, String message) {
-            MyAlertDialogFragment frag = new MyAlertDialogFragment();
-            Bundle args = new Bundle();
-            args.putInt("title", title);
-            args.putString("message", message);
-            frag.setArguments(args);
-            return frag;
-        }
-
-        @Override
-        public Dialog onCreateDialog(Bundle savedInstanceState) {
-            int title = getArguments().getInt("title");
-            String message = getArguments().getString("message");
-
-            return new AlertDialog.Builder(getActivity())
-                    .setIcon(android.R.drawable.ic_dialog_alert)
-                    .setTitle(title)
-                    .setMessage(message)
-                    .setPositiveButton(android.R.string.ok,
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int whichButton) {
-                                dialog.dismiss();
-                            }
-                        }
-                    )
-                    .create();
-        }
     }
 
     class GroupAdapter extends ArrayAdapter<String> {
@@ -272,10 +256,12 @@ public class GroupListActivity extends FragmentActivity implements
         Log.v("onEditDone text: ", input);
         if (requestId == 0) {
             if (!TextUtils.isEmpty(input)) {
+                showProgressDialog();
                 KiiUser.findUserByUserName(input, new KiiUserCallBack() {
                     @Override
                     public void onFindCompleted(int token, KiiUser caller,
                             KiiUser found, Exception exception) {
+                        dismissProgressDiallog();
                         if (found != null) {
                             currentTarget.addUser(found);
                             currentTarget.save(new KiiGroupCallBack() {
@@ -310,10 +296,12 @@ public class GroupListActivity extends FragmentActivity implements
             df.dismiss();
 
             final KiiGroup gp = Kii.group(input);
+            showProgressDialog();
             gp.save(new KiiGroupCallBack() {
                 @Override
                 public void onSaveCompleted(int token, KiiGroup group,
                         Exception exception) {
+                    dismissProgressDiallog();
                     GroupListActivity.this
                             .setProgressBarIndeterminateVisibility(false);
                     if (exception == null) {
