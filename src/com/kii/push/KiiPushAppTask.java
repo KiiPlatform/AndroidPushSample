@@ -1,7 +1,7 @@
 package com.kii.push;
 
-import android.app.Activity;
 import android.os.AsyncTask;
+import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
@@ -19,7 +19,7 @@ public class KiiPushAppTask extends AsyncTask<Object, Void, String> {
 
     private static final String TAG = "KiiPushAppTask";
     int menuId;
-    Activity activity;
+    FragmentActivity activity;
     String menuString;
     Exception e;
     PrefWrapper pref;
@@ -39,7 +39,8 @@ public class KiiPushAppTask extends AsyncTask<Object, Void, String> {
         public static final int LOGIN = Integer.MAX_VALUE;
     }
 
-    public KiiPushAppTask(int menuId, String menuString, Activity activity) {
+    public KiiPushAppTask(int menuId, String menuString,
+            FragmentActivity activity) {
         this.menuId = menuId;
         this.activity = activity;
         this.menuString = menuString;
@@ -48,9 +49,7 @@ public class KiiPushAppTask extends AsyncTask<Object, Void, String> {
 
     @Override
     protected void onPostExecute(String extra) {
-        // TODO: ListActivityCore is horrible abuse of inheritance..
-        ListActivityCore.closeDialog(ListActivityCore.DIALOG_PROGRESS,
-                activity);
+        dismissProgressDialog();
         StringBuilder b = new StringBuilder();
         b.append(this.menuString);
         b.append(" : ");
@@ -78,9 +77,7 @@ public class KiiPushAppTask extends AsyncTask<Object, Void, String> {
 
     @Override
     protected void onPreExecute() {
-        // TODO use flagment.
-        ListActivityCore.openDialog(ListActivityCore.DIALOG_PROGRESS,
-                "Processing...", activity);
+        showProgressDialog();
     }
 
     @Override
@@ -111,6 +108,19 @@ public class KiiPushAppTask extends AsyncTask<Object, Void, String> {
         default:
             throw new RuntimeException("Unkown id: " + menuId);
         }
+    }
+
+    void showProgressDialog() {
+        ProgressDialogFragment pdf = ProgressDialogFragment.newInstance();
+        pdf.show(this.activity.getSupportFragmentManager(),
+                ProgressDialogFragment.TAG);
+    }
+
+    void dismissProgressDialog() {
+        ProgressDialogFragment pdf = (ProgressDialogFragment) this.activity
+                .getSupportFragmentManager().findFragmentByTag(
+                        ProgressDialogFragment.TAG);
+        pdf.dismiss();
     }
 
     private String doSubscribeAppBucket() {

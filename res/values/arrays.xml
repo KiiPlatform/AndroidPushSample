@@ -14,7 +14,7 @@
         <item>@string/subscribe_ascope_bucket</item>
     </string-array>
 
-    <string-array name="kiipush_control">
+    <string-array name="bucket_control">
         <item>@string/add_object</item>
         <item>@string/edit_object</item>
         <item>@string/show_bucket_data</item>

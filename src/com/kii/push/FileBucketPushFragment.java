@@ -29,6 +29,7 @@ import com.kii.cloud.storage.KiiUser;
 import com.kii.cloud.storage.callback.KiiACLCallBack;
 import com.kii.cloud.storage.callback.KiiFileCallBack;
 import com.kii.cloud.storage.callback.KiiPushCallBack;
+import com.kii.cloud.storage.exception.app.ConflictException;
 import com.kii.push.ListDialogFragment.ListDialogFragmentCallback;
 
 public class FileBucketPushFragment extends Fragment implements
@@ -60,13 +61,21 @@ public class FileBucketPushFragment extends Fragment implements
             showListDialog();
         } else if (pos == 1) { // Subscribe file bucket
             KiiFileBucket bucket = Kii.fileBucket(FILE_BUCKET_NAME);
+            showProgressDialog();
             KiiUser.getCurrentUser().pushSubscription()
                     .subscribe(bucket, new KiiPushCallBack() {
                         @Override
                         public void onSubscribeCompleted(int taskId,
                                 KiiSubscribable target, Exception e) {
+                            dismissProgressDiallog();
                             if (e != null) {
-                                showAlertDialog(e.getMessage());
+                                if (e instanceof ConflictException) {
+                                    Toast.makeText(getActivity(),
+                                            "Subscription exists",
+                                            Toast.LENGTH_LONG).show();
+                                } else {
+                                    showAlertDialog(e.getMessage());
+                                }
                             } else {
                                 Toast.makeText(getActivity(),
                                         "Subscribe succeeded",
@@ -93,12 +102,25 @@ public class FileBucketPushFragment extends Fragment implements
                 ListDialogFragment.TAG);
     }
 
+    private void showProgressDialog() {
+        ProgressDialogFragment pdf = ProgressDialogFragment.newInstance();
+        pdf.show(getFragmentManager(), ProgressDialogFragment.TAG);
+    }
+
+    private void dismissProgressDiallog() {
+        ProgressDialogFragment pdf = (ProgressDialogFragment) getFragmentManager()
+                .findFragmentByTag(ProgressDialogFragment.TAG);
+        pdf.dismiss();
+    }
+
     private void doCreateFile() {
         mFile = Kii.fileBucket(FILE_BUCKET_NAME).file();
+        showProgressDialog();
         mFile.save(new KiiFileCallBack() {
             @Override
             public void onSaveCompleted(int token,
                     KiiFile file, Exception exception) {
+                dismissProgressDiallog();
                 if (exception != null) {
                     // TODO: impl progress.
                     showAlertDialog(exception.getMessage());
@@ -119,10 +141,12 @@ public class FileBucketPushFragment extends Fragment implements
             return;
         }
         mFile.setCustomeField("custom"+System.currentTimeMillis());
+        showProgressDialog();
         mFile.save(new KiiFileCallBack() {
             @Override
             public void onSaveCompleted(int token,
                     KiiFile file, Exception exception) {
+                dismissProgressDiallog();
                 if (exception != null) {
                     showAlertDialog(exception.getMessage());
                 } else {
@@ -148,10 +172,12 @@ public class FileBucketPushFragment extends Fragment implements
         } catch (IOException ioe) {
             showAlertDialog(ioe.getMessage());
         }
+        showProgressDialog();
         mFile.save(new KiiFileCallBack() {
             @Override
             public void onSaveCompleted(int token,
                     KiiFile file, Exception exception) {
+                dismissProgressDiallog();
                 if (exception != null) {
                     showAlertDialog(exception.getMessage());
                 } else {
@@ -170,9 +196,11 @@ public class FileBucketPushFragment extends Fragment implements
                     Toast.LENGTH_LONG).show();
             return;
         }
+        showProgressDialog();
         mFile.delete(new KiiFileCallBack() {
             @Override
             public void onDeleteCompleted(int token, Exception exception) {
+                dismissProgressDiallog();
                 if (exception != null) {
                     showAlertDialog(exception.getMessage());
                 } else {
@@ -192,10 +220,12 @@ public class FileBucketPushFragment extends Fragment implements
                     Toast.LENGTH_LONG).show();
             return;
         }
+        showProgressDialog();
         mFile.moveToTrash(new KiiFileCallBack() {
             @Override
             public void onMoveTrashCompleted(int token, KiiFile file,
                     Exception exception) {
+                dismissProgressDiallog();
                 if (exception != null) {
                     showAlertDialog(exception.getMessage());
                 } else {
@@ -218,11 +248,13 @@ public class FileBucketPushFragment extends Fragment implements
         KiiACLEntry entry = new KiiACLEntry(KiiAnyAuthenticatedUser.create(),
                 FileAction.READ_EXISTING_OBJECT, true);
         acl.putACLEntry(entry);
+        showProgressDialog();
         acl.save(new KiiACLCallBack() {
 
             @Override
             public void onSaveCompleted(int token, KiiACL acl,
                     Exception exception) {
+                dismissProgressDiallog();
                 if (exception != null) {
                     showAlertDialog(exception.getMessage());
                 } else {
@@ -242,10 +274,12 @@ public class FileBucketPushFragment extends Fragment implements
                     Toast.LENGTH_LONG).show();
             return;
         }
+        showProgressDialog();
         mFile.restoreFromTrash(new KiiFileCallBack() {
             @Override
             public void onRestoreTrashCompleted(int token, KiiFile file,
                     Exception exception) {
+                dismissProgressDiallog();
                 if (exception != null) {
                     showAlertDialog(exception.getMessage());
                 } else {
