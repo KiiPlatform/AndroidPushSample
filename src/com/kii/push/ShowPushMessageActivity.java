@@ -3,9 +3,13 @@ package com.kii.push;
 import java.util.Iterator;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Gravity;
+import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
+import android.widget.Button;
 import android.widget.TableLayout;
 import android.widget.TextView;
 
@@ -18,10 +22,19 @@ public class ShowPushMessageActivity extends Activity {
         // Show Content
         setContentView(R.layout.showview);
         // Get intent bundle
-        Bundle b = getIntent().getExtras();
+        final Bundle b = getIntent().getExtras();
         // Expand
         TableLayout table = (TableLayout) findViewById(R.id.showview);
         setTextToTable(b, this, table);
+        final Button button = (Button) findViewById(R.id.parse);
+        button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent i = new Intent(getApplicationContext(),
+                        PushMessageParseActivity.class);
+                i.putExtras(b);
+                startActivity(i);
+            }
+        });
     }
 
     public static void setTextToTable(Bundle bundle, Activity activity,
@@ -49,4 +62,5 @@ public class ShowPushMessageActivity extends Activity {
             row.addView(tvvalue);
         }
     }
+
 }

@@ -1,7 +1,7 @@
 package com.kii.push;
 
-import android.app.Activity;
 import android.os.AsyncTask;
+import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
@@ -12,7 +12,6 @@ import com.kii.cloud.storage.KiiBucket;
 import com.kii.cloud.storage.KiiPushMessage;
 import com.kii.cloud.storage.KiiTopic;
 import com.kii.cloud.storage.KiiUser;
-import com.kii.cloud.storage.exception.app.AppException;
 import com.kii.cloud.storage.exception.app.BadRequestException;
 import com.kii.cloud.storage.exception.app.ConflictException;
 
@@ -20,7 +19,7 @@ public class KiiPushAppTask extends AsyncTask<Object, Void, String> {
 
     private static final String TAG = "KiiPushAppTask";
     int menuId;
-    Activity activity;
+    FragmentActivity activity;
     String menuString;
     Exception e;
     PrefWrapper pref;
@@ -40,7 +39,8 @@ public class KiiPushAppTask extends AsyncTask<Object, Void, String> {
         public static final int LOGIN = Integer.MAX_VALUE;
     }
 
-    public KiiPushAppTask(int menuId, String menuString, Activity activity) {
+    public KiiPushAppTask(int menuId, String menuString,
+            FragmentActivity activity) {
         this.menuId = menuId;
         this.activity = activity;
         this.menuString = menuString;
@@ -49,9 +49,7 @@ public class KiiPushAppTask extends AsyncTask<Object, Void, String> {
 
     @Override
     protected void onPostExecute(String extra) {
-        // TODO: ListActivityCore is horrible abuse of inheritance..
-        ListActivityCore.closeDialog(ListActivityCore.DIALOG_PROGRESS,
-                activity);
+        dismissProgressDialog();
         StringBuilder b = new StringBuilder();
         b.append(this.menuString);
         b.append(" : ");
@@ -79,9 +77,7 @@ public class KiiPushAppTask extends AsyncTask<Object, Void, String> {
 
     @Override
     protected void onPreExecute() {
-        // TODO use flagment.
-        ListActivityCore.openDialog(ListActivityCore.DIALOG_PROGRESS,
-                "Processing...", activity);
+        showProgressDialog();
     }
 
     @Override
@@ -100,7 +96,7 @@ public class KiiPushAppTask extends AsyncTask<Object, Void, String> {
         case MENU_ID.CREATE_USCOPE_TOPIC:
             return doCreateUscopeTopic();
         case MENU_ID.SENDMESSAGE_TO_USCOPE_TOPIC:
-            return doSendMessageToUserScopeTopic();
+            return doSendMessageToUserScopeTopic((KiiPushMessage)args[0]);
         case MENU_ID.SUBSCRIBE_USCOPE_TOPIC:
             return doSubscribeUserScopeTopic();
         case MENU_ID.SUBSCRIBE_ASCOPE_TOPIC:
@@ -112,6 +108,19 @@ public class KiiPushAppTask extends AsyncTask<Object, Void, String> {
         default:
             throw new RuntimeException("Unkown id: " + menuId);
         }
+    }
+
+    void showProgressDialog() {
+        ProgressDialogFragment pdf = ProgressDialogFragment.newInstance();
+        pdf.show(this.activity.getSupportFragmentManager(),
+                ProgressDialogFragment.TAG);
+    }
+
+    void dismissProgressDialog() {
+        ProgressDialogFragment pdf = (ProgressDialogFragment) this.activity
+                .getSupportFragmentManager().findFragmentByTag(
+                        ProgressDialogFragment.TAG);
+        pdf.dismiss();
     }
 
     private String doSubscribeAppBucket() {
@@ -228,11 +237,9 @@ public class KiiPushAppTask extends AsyncTask<Object, Void, String> {
         return null;
     }
 
-    private String doSendMessageToUserScopeTopic() {
-        KiiPushMessage.Data data = new KiiPushMessage.Data();
-        data.put("custom_message", "Hello, Kii Push servce!");
-        KiiPushMessage msg = KiiPushMessage.buildWith(data).build();
+    private String doSendMessageToUserScopeTopic(KiiPushMessage msg) {
         try {
+            Log.v(TAG, "Sending kii push message. JSON:"+msg.toJSON().toString(2));
             assertGCMRegistred();
             KiiTopic topic = KiiUser.topic(Constants.USERTOPIC);
             topic.sendMessage(msg);

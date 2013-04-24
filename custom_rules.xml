@@ -32,7 +32,18 @@
         />
     </target>
 
-    <target name="-pre-build" depends="convert-to-java-properties">
+    <target name="embedd-sender-id" depends="convert-to-java-properties">
+        <property file="assets/${properties-file}"/>
+        <echo message="gcm sender id ${gcm-sender-id}" />
+        <replaceregexp
+            file="src/com/kii/push/Constants.java"
+            match="(\s*public\s*static\s*final\s*String\s*GCM_SENDER_ID\s*=\s*&quot;)(.*)&quot;"
+            replace="\1${gcm-sender-id}&quot;"
+            byline="true"
+        />
+    </target>
+
+    <target name="-pre-build" depends="embedd-sender-id">
     </target>
 
 </project>

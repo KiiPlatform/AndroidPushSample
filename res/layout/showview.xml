@@ -14,15 +14,38 @@
   - License for the specific language governing permissions and limitations
   - under the License.
 -->
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent" >
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
 
-    <TableLayout
-        android:id="@+id/showview"
-        android:layout_width="fill_parent"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="1dp"
-        android:shrinkColumns="1" />
+        android:layout_marginLeft="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginTop="15dp"
+        android:orientation="horizontal" >
 
-</ScrollView>
+        <Button
+            android:id="@+id/parse"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Parse Message" />
+    </LinearLayout>
+
+    <ScrollView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" >
+
+        <TableLayout
+            android:id="@+id/showview"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:padding="1dp"
+            android:shrinkColumns="1" />
+    </ScrollView>
+
+</LinearLayout>

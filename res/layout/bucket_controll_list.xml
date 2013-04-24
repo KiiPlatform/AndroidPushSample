@@ -6,8 +6,8 @@
     android:orientation="vertical"
     >
     <ListView
-        android:id="@+id/mainListView"
-        android:entries="@array/kiipush_menu"
+        android:id="@+id/bucket_controll_listview"
+        android:entries="@array/bucket_control"
         android:layout_weight="1"
         android:layout_width="fill_parent"
         android:layout_height="0dip" >

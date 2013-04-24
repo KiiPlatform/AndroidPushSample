@@ -45,6 +45,16 @@
     <string name="edit_text">Input text</string>
     <string name="bucket_operation">Bucket Operation</string>
     <string name="pushmessage_detail">Push Message detail</string>
+    <string name="pushmessage_parse">Parsed Push Message</string>
     <string name="settings">Settings</string>
     <string name="groups">Groups</string>
+    <string name="file_activity">File Bucket Push</string>
+    <string name="file_bucket_controll">File bucket controll</string>
+    <string name="file_bucket_push">File Bucket Push</string>
+    <string name="send_message">Send message</string>
+    <string name="install_push">Install Push</string>
+    <string name="gcm">GCM</string>
+    <string name="bucket">Bucket</string>
+    <string name="topic">Topic</string>
+    <string name="operation_failed">Operation failed</string>
 </resources>

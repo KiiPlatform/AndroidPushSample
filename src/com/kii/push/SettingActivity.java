@@ -2,14 +2,15 @@ package com.kii.push;
 
 import com.kii.cloud.storage.KiiUser;
 
-import android.app.Activity;
 import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-public class SettingActivity extends Activity implements View.OnClickListener {
+public class SettingActivity extends FragmentActivity implements
+        View.OnClickListener {
 
     Button loginBtn;
     Button logoutBtn;
