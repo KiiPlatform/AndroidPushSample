@@ -25,11 +25,9 @@ public class KiiPushAppTask extends AsyncTask<Object, Void, String> {
     PrefWrapper pref;
 
     public static class MENU_ID {
-        public static final int INSTALL_PUSH = 0;
         public static final int SUBSCRIBE_BUCKET = 1;
         public static final int UNSUBSCRIBE_BUCKET = 2;
         public static final int BUCKET_CONTROLL = 3;
-        public static final int UNREGISTER_GCM = 4;
         public static final int CREATE_USCOPE_TOPIC = 5;
         public static final int SUBSCRIBE_USCOPE_TOPIC = 6;
         public static final int SENDMESSAGE_TO_USCOPE_TOPIC = 7;
@@ -83,16 +81,12 @@ public class KiiPushAppTask extends AsyncTask<Object, Void, String> {
     @Override
     protected String doInBackground(Object... args) {
         switch (menuId) {
-        case MENU_ID.INSTALL_PUSH:
-            return doInstallPush((String) args[0]);
         case MENU_ID.SUBSCRIBE_BUCKET:
             return doSubscribeBucket();
         case MENU_ID.UNSUBSCRIBE_BUCKET:
             return doUnsubscribeBucket();
         case MENU_ID.BUCKET_CONTROLL:
             return doBucketControl();
-        case MENU_ID.UNREGISTER_GCM:
-            return doUnregisterGCM();
         case MENU_ID.CREATE_USCOPE_TOPIC:
             return doCreateUscopeTopic();
         case MENU_ID.SENDMESSAGE_TO_USCOPE_TOPIC:
@@ -167,16 +161,6 @@ public class KiiPushAppTask extends AsyncTask<Object, Void, String> {
         return null;
     }
 
-    private String doUnregisterGCM() {
-        try {
-            assertGCMRegistred();
-            GCMRegistrar.unregister(this.activity.getApplicationContext());
-        } catch (Exception e) {
-            this.e = e;
-        }
-        return null;
-    }
-
     private String doBucketControl() {
         throw new RuntimeException("Do not call for this menu.");
     }
@@ -199,16 +183,6 @@ public class KiiPushAppTask extends AsyncTask<Object, Void, String> {
             KiiUser user = KiiUser.getCurrentUser();
             KiiBucket bucket = user.bucket(Constants.PUSH_BUCKET_NAME);
             user.pushSubscription().subscribeBucket(bucket);
-        } catch (Exception e) {
-            this.e = e;
-        }
-        return null;
-    }
-
-    private String doInstallPush(String regId) {
-        try {
-            Log.v(TAG, "Installing with Registration Id :" + regId);
-            KiiUser.pushInstallation().install(regId);
         } catch (Exception e) {
             this.e = e;
         }
