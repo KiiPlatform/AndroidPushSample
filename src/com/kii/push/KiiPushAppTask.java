@@ -6,7 +6,6 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.google.android.gcm.GCMRegistrar;
 import com.kii.cloud.storage.Kii;
 import com.kii.cloud.storage.KiiBucket;
 import com.kii.cloud.storage.KiiPushMessage;
@@ -224,9 +223,8 @@ public class KiiPushAppTask extends AsyncTask<Object, Void, String> {
     }
 
     private void assertGCMRegistred() throws IllegalStateException {
-        String regId = GCMRegistrar.getRegistrationId(this.activity
-                .getApplicationContext());
-        if (TextUtils.isEmpty(regId)) {
+        if (!KiiGCMRegisterer.getInstance(activity.getApplicationContext())
+                .isRegistered()) {
             throw new IllegalStateException("Register GCM before.");
         }
     }
