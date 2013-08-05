@@ -223,8 +223,7 @@ public class KiiPushAppTask extends AsyncTask<Object, Void, String> {
     }
 
     private void assertGCMRegistred() throws IllegalStateException {
-        if (!KiiGCMRegisterer.getInstance(activity.getApplicationContext())
-                .isRegistered()) {
+        if (TextUtils.isEmpty(GCMPreference.getRegistrationId(activity.getApplicationContext()))) {
             throw new IllegalStateException("Register GCM before.");
         }
     }
