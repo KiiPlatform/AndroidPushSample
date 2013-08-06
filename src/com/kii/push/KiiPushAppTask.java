@@ -113,7 +113,8 @@ public class KiiPushAppTask extends AsyncTask<Object, Void, String> {
         ProgressDialogFragment pdf = (ProgressDialogFragment) this.activity
                 .getSupportFragmentManager().findFragmentByTag(
                         ProgressDialogFragment.TAG);
-        pdf.dismiss();
+        if(pdf != null)
+            pdf.dismiss();
     }
 
     private String doSubscribeAppBucket() {
