@@ -6,7 +6,6 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.google.android.gcm.GCMRegistrar;
 import com.kii.cloud.storage.Kii;
 import com.kii.cloud.storage.KiiBucket;
 import com.kii.cloud.storage.KiiPushMessage;
@@ -114,7 +113,8 @@ public class KiiPushAppTask extends AsyncTask<Object, Void, String> {
         ProgressDialogFragment pdf = (ProgressDialogFragment) this.activity
                 .getSupportFragmentManager().findFragmentByTag(
                         ProgressDialogFragment.TAG);
-        pdf.dismiss();
+        if(pdf != null)
+            pdf.dismiss();
     }
 
     private String doSubscribeAppBucket() {
@@ -224,9 +224,7 @@ public class KiiPushAppTask extends AsyncTask<Object, Void, String> {
     }
 
     private void assertGCMRegistred() throws IllegalStateException {
-        String regId = GCMRegistrar.getRegistrationId(this.activity
-                .getApplicationContext());
-        if (TextUtils.isEmpty(regId)) {
+        if (TextUtils.isEmpty(GCMPreference.getRegistrationId(activity.getApplicationContext()))) {
             throw new IllegalStateException("Register GCM before.");
         }
     }
