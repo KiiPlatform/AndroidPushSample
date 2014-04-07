@@ -134,6 +134,9 @@ public class MessageTemplateLoader {
                 builder.withAlertLocArgs(strArray);
             }
         }
+        if (json.has("contentAvailable")) {
+            builder.withContentAvailable(json.getInt("contentAvailable"));
+        }
         return builder.build();
     }
 
