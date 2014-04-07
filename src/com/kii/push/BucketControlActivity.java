@@ -39,10 +39,10 @@ public class BucketControlActivity extends FragmentActivity implements OnItemCli
             new BucketAsyncTask(BucketAsyncTask.TaskID.OBJECT_DELETE, this)
                     .execute();
         } else if (pos == 5) {
-            new BucketAsyncTask(BucketAsyncTask.TaskID.OBJECT_ACL_UPDATE, this)
+            new BucketAsyncTask(BucketAsyncTask.TaskID.BUCKET_ACL_UPDATE, this)
                     .execute();
         } else if (pos == 6) {
-            new BucketAsyncTask(BucketAsyncTask.TaskID.BUCKET_ACL_UPDATE, this)
+            new BucketAsyncTask(BucketAsyncTask.TaskID.OBJECT_ACL_UPDATE, this)
                     .execute();
         }
     }
