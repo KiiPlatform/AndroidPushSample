@@ -40,9 +40,6 @@ public class MainTabActivity extends FragmentActivity {
         host.addTab(host.newTabSpec("Bucket").setIndicator("Bucket"),
                 BucketPushFragment.class, null);
 
-        host.addTab(host.newTabSpec("FileBucket").setIndicator("FileBucket"),
-                FileBucketPushFragment.class, null);
-
         host.addTab(host.newTabSpec("Topic").setIndicator("Topic"),
                 TopicPushFragment.class, null);
     }
