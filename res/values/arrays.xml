@@ -54,8 +54,17 @@
     </string-array>
 
     <string-array name="gcm_menu">
+        <item>@string/register_gcm</item>
         <item>@string/install</item>
+        <item>@string/uninstall</item>
         <item>@string/unregister_gcm</item>
+    </string-array>
+
+    <string-array name="jpush_menu">
+        <item>@string/register_jpush</item>
+        <item>@string/install</item>
+        <item>@string/uninstall</item>
+        <item>@string/unregister_jpush</item>
     </string-array>
 
     <string-array name="bucket_menu">
