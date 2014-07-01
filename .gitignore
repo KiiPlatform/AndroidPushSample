@@ -3,3 +3,4 @@ gen
 local.properties
 *.pyc
 app.properties
+.idea/
