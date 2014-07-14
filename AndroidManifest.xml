@@ -118,7 +118,8 @@
 
         <receiver
             android:name=".KiiPushBroadcastReceiver"
-            android:permission="com.google.android.c2dm.permission.SEND" >
+            android:enabled="true"
+            android:exported="false" >
             <intent-filter>
                 <!-- Receives the actual messages. -->
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
