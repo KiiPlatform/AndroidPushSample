@@ -17,6 +17,9 @@
             * if your app domain is JP: replace with api-jp.kii.com
         * gcm-app-key: replace with your GCM app key obtained on https://code.google.com/apis/console
         * gcm-sender-id replace with your GCM project number.
+        * jpush-app-key replace with your JPush AppKey shown on JPush Developer console.
+        * jpush-master-secret replace with your JPush API MasterSecret shown on JPush Developer console.<br>
+        (Make sure not to expose this secret.)
     * run setting script
 
       ~~~
