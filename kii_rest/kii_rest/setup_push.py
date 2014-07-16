@@ -189,7 +189,8 @@ class ApiHelper(object):
             'identifier':time.time()}
         gcm = {'enabled': True}
         apns = {'enabled': True}
-        body = {'data': pushData, 'gcm': gcm, 'apns': apns}
+        jpush = {'enabled': True}
+        body = {'data': pushData, 'gcm': gcm, 'apns': apns, 'jpush': jpush}
         jsonBody = json.dumps(body)
         self.logger.debug('path: %s', path)
         self.logger.debug('data %s', jsonBody)
