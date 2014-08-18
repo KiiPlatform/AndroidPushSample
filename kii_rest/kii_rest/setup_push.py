@@ -30,6 +30,8 @@ class ApiHelper(object):
         self.host = conf.get('app', 'host')
         self.gcmAppKey = conf.get('app', 'gcm-app-key')
         self.clientId = conf.get('app', 'client-id')
+        self.jPushAppKey = conf.get('app', 'jpush-app-key')
+        self.jPushMasterSecret = conf.get('app', 'jpush-master-secret')
         self.setCollapseKey=conf.get('app', 'set-collapse-key')
         self.clientSecret = conf.get('app', 'client-secret')
         self.appTopic = conf.get('constants', 'app-topic-name')
@@ -84,6 +86,50 @@ class ApiHelper(object):
         path = '/api/apps/{0}/configuration/gcm'.format(self.appId);
         headers = {'x-kii-appid': self.appId, 'x-kii-appkey': self.appKey,
                    'authorization': 'Bearer ' + self.token}
+        conn.request('DELETE', path, None, headers)
+        response = conn.getresponse()
+        self.logger.debug('status: %d', response.status)
+
+    def setJPushKey(self):
+        self.logger.debug('set jpush key')
+        conn = httplib.HTTPConnection(self.host)
+        path = '/api/apps/{0}/configuration/jpush'.format(self.appId);
+        self.logger.debug('path: ' + path)
+        body = {'appKey': self.jPushAppKey, 'masterKey': self.jPushMasterSecret}
+        headers = {'x-kii-appid': self.appId, 'x-kii-appkey': self.appKey,
+                'authorization': 'Bearer ' + self.token,
+                'content-type':
+                'application/vnd.kii.JPushKeyRegistrationRequest+json'}
+        jsonBody = json.dumps(body);
+        conn.request('PUT', path, jsonBody, headers)
+        response = conn.getresponse()
+        self.logger.debug('status: %d', response.status)
+        self.logger.debug('body: %s', response.read())
+
+    def getJPushKey(self):
+        self.logger.debug('get jpush key')
+        conn = httplib.HTTPSConnection(self.host)
+        path = '/api/apps/{0}/configuration/jpush'.format(self.appId);
+        headers = {'x-kii-appid': self.appId, 'x-kii-appkey': self.appKey, \
+                'authorization': 'Bearer ' + self.token}
+        self.logger.debug('path: ' + path)
+        conn.request('GET', path, None, headers)
+        response = conn.getresponse()
+        jResp = json.load(response);
+        jPushAppKey = jResp['appKey']
+        jPushMasterSecret = jResp['masterKey']
+        self.logger.debug('status: %d', response.status)
+        self.logger.debug('body: %s', jResp)
+        self.logger.debug('jPushAppKey: ' + jPushAppKey)
+        self.logger.debug('jPushMasterSecret: ' + jPushMasterSecret)
+        return jPushAppKey
+
+    def removeJPushKey(self):
+        self.logger.debug('remove jpush key')
+        conn = httplib.HTTPSConnection(self.host)
+        path = '/api/apps/{0}/configuration/jpush'.format(self.appId);
+        headers = {'x-kii-appid': self.appId, 'x-kii-appkey': self.appKey,
+                'authorization': 'Bearer ' + self.token}
         conn.request('DELETE', path, None, headers)
         response = conn.getresponse()
         self.logger.debug('status: %d', response.status)
@@ -143,7 +189,8 @@ class ApiHelper(object):
             'identifier':time.time()}
         gcm = {'enabled': True}
         apns = {'enabled': True}
-        body = {'data': pushData, 'gcm': gcm, 'apns': apns}
+        jpush = {'enabled': True}
+        body = {'data': pushData, 'gcm': gcm, 'apns': apns, 'jpush': jpush}
         jsonBody = json.dumps(body)
         self.logger.debug('path: %s', path)
         self.logger.debug('data %s', jsonBody)
@@ -189,6 +236,9 @@ if __name__ == '__main__':
     helper.removeGCMKey()
     helper.setGCMKey()
     helper.getGCMKey()
+    helper.removeJPushKey()
+    helper.setJPushKey()
+    helper.getJPushKey()
     helper.createAppTopic()
     helper.grantSubscriptionOfAppTopic()
     helper.createAppBucketObject()

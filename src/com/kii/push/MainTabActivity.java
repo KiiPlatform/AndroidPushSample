@@ -1,5 +1,7 @@
 package com.kii.push;
 
+import cn.jpush.android.api.JPushInterface;
+
 import com.kii.cloud.storage.Kii;
 
 import android.app.LocalActivityManager;
@@ -22,6 +24,9 @@ public class MainTabActivity extends FragmentActivity {
         PrefWrapper prefs = PrefWrapper.getInstance(this);
 
         Kii.initialize(pm.getAppId(), pm.getAppKey(), pm.getBaseUri());
+        // JPush initialize
+        JPushInterface.setDebugMode(true);
+        JPushInterface.init(this);
         // Login UFE
         KiiPushAppTask task = new KiiPushAppTask(KiiPushAppTask.MENU_ID.LOGIN,
                 "LOGIN", this);
@@ -29,6 +34,17 @@ public class MainTabActivity extends FragmentActivity {
         initTabs();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        JPushInterface.onResume(this);
+    }
+    
+    @Override
+    protected void onPause() {
+        JPushInterface.onPause(this);
+        super.onPause();
+    }
     private void initTabs() {
 
         FragmentTabHost host = (FragmentTabHost) findViewById(android.R.id.tabhost);
@@ -37,11 +53,11 @@ public class MainTabActivity extends FragmentActivity {
         host.addTab(host.newTabSpec("GCM").setIndicator("GCM"),
                 GCMFragment.class, null);
 
+        host.addTab(host.newTabSpec("JPush").setIndicator("JPush"),
+                JPushFragment.class, null);
+
         host.addTab(host.newTabSpec("Bucket").setIndicator("Bucket"),
                 BucketPushFragment.class, null);
-
-        host.addTab(host.newTabSpec("FileBucket").setIndicator("FileBucket"),
-                FileBucketPushFragment.class, null);
 
         host.addTab(host.newTabSpec("Topic").setIndicator("Topic"),
                 TopicPushFragment.class, null);

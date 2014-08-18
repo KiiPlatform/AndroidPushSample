@@ -7,7 +7,6 @@ import android.view.ViewGroup.LayoutParams;
 import android.widget.TableLayout;
 import android.widget.TextView;
 
-import com.kii.cloud.storage.KiiFile;
 import com.kii.cloud.storage.KiiObject;
 import com.kii.cloud.storage.KiiTopic;
 import com.kii.cloud.storage.KiiUser;
@@ -44,11 +43,6 @@ public class PushMessageParseActivity extends Activity {
                 if (pam.containsKiiObject()) {
                     KiiObject obj = pam.getKiiObject();
                     setKeyValueToTable("KiiObject", obj.toString());
-                }
-            } else if (pam.containsKiiFileBucket()) {
-                if (pam.containsKiiFile()) {
-                    KiiFile file = pam.getKiiFile();
-                    setKeyValueToTable("KiiFile", file.toUri().toString());
                 }
             }
             break;

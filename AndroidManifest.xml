@@ -16,8 +16,12 @@
     <!-- Keeps the processor from sleeping when a message is received. -->
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
+    <!-- These permissions are required for JPush integration -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.WRITE_SETTINGS" />
+
     <!--
-     Creates a custom permission so only this app can receive its messages.
+     Creates a custom permission so only this app can receive GCM messages.
 
      NOTE: the permission *must* be called PACKAGE.permission.C2D_MESSAGE,
            where PACKAGE is the application's package name.
@@ -25,8 +29,18 @@
     <permission
         android:name="com.kii.push.permission.C2D_MESSAGE"
         android:protectionLevel="signature" />
-
     <uses-permission android:name="com.kii.push.permission.C2D_MESSAGE" />
+
+    <!--
+     Creates a custom permission so only this application can receive JPush messages.
+
+     NOTE: the permission *must* be called PACKAGE.permission.JPUSH_MESSAGE,
+           where PACKAGE is the application's package name.
+    -->
+    <permission
+        android:name="com.kii.push.permission.JPUSH_MESSAGE"
+        android:protectionLevel="signature" />
+    <uses-permission android:name="com.kii.push.permission.JPUSH_MESSAGE" />
 
     <!-- This app has permission to register and receive data message. -->
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
@@ -56,8 +70,56 @@
         <activity android:name="com.kii.push.BucketPushFragment" android:label="@string/bucket" />
         <activity android:name="com.kii.push.TopicPushFragment" android:label="@string/topic" />
 
+        <service
+            android:name="cn.jpush.android.service.PushService"
+            android:enabled="true"
+            android:exported="false" >
+            <intent-filter>
+                <action android:name="cn.jpush.android.intent.REGISTER" />
+                <action android:name="cn.jpush.android.intent.REPORT" />
+                <action android:name="cn.jpush.android.intent.PushService" />
+                <action android:name="cn.jpush.android.intent.PUSH_TIME" />
+            </intent-filter>
+        </service>
+
+        <receiver
+            android:name="cn.jpush.android.service.PushReceiver"
+            android:enabled="true"
+            android:exported="false" >
+            <intent-filter android:priority="1000" >
+                <action android:name="cn.jpush.android.intent.NOTIFICATION_RECEIVED_PROXY" />
+
+                <category android:name="com.kii.push" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.USER_PRESENT" />
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.PACKAGE_ADDED" />
+                <action android:name="android.intent.action.PACKAGE_REMOVED" />
+
+                <data android:scheme="package" />
+            </intent-filter>
+        </receiver>
+        <receiver android:name="cn.jpush.android.service.AlarmReceiver" />
+
+        <activity
+            android:name="cn.jpush.android.ui.PushActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" >
+            <intent-filter>
+                <action android:name="cn.jpush.android.ui.PushActivity" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="com.kii.push" />
+            </intent-filter>
+        </activity>
+
         <receiver
             android:name=".KiiPushBroadcastReceiver"
+            android:enabled="true"
+            android:exported="true"
             android:permission="com.google.android.c2dm.permission.SEND" >
             <intent-filter>
                 <!-- Receives the actual messages. -->
@@ -65,6 +127,25 @@
                 <category android:name="com.kii.push" />
             </intent-filter>
         </receiver>
+
+        <receiver
+            android:name=".JPushBroadcastReceiver"
+            android:enabled="true"
+            android:exported="false" >
+            <intent-filter>
+                <!-- Receives the actual messages. -->
+                <action android:name="cn.jpush.android.intent.REGISTRATION" />
+                <action android:name="cn.jpush.android.intent.UNREGISTRATION" />
+                <action android:name="cn.jpush.android.intent.MESSAGE_RECEIVED" />
+                <action android:name="cn.jpush.android.intent.NOTIFICATION_RECEIVED" />
+                <action android:name="cn.jpush.android.intent.NOTIFICATION_OPENED" />
+                <action android:name="cn.jpush.android.intent.ACTION_RICHPUSH_CALLBACK" />
+                <category android:name="com.kii.push" />
+            </intent-filter>
+        </receiver>
+
+        <meta-data android:name="JPUSH_APPKEY" android:value="9706f494cc7596d99b52f947" />
+        <meta-data android:name="JPUSH_CHANNEL" android:value="developer-default" />
     </application>
 
 </manifest>
