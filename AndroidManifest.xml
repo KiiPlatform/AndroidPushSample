@@ -119,10 +119,21 @@
         <receiver
             android:name=".KiiPushBroadcastReceiver"
             android:enabled="true"
-            android:exported="false" >
+            android:exported="true"
+            android:permission="com.google.android.c2dm.permission.SEND" >
             <intent-filter>
                 <!-- Receives the actual messages. -->
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <category android:name="com.kii.push" />
+            </intent-filter>
+        </receiver>
+
+        <receiver
+            android:name=".JPushBroadcastReceiver"
+            android:enabled="true"
+            android:exported="false" >
+            <intent-filter>
+                <!-- Receives the actual messages. -->
                 <action android:name="cn.jpush.android.intent.REGISTRATION" />
                 <action android:name="cn.jpush.android.intent.UNREGISTRATION" />
                 <action android:name="cn.jpush.android.intent.MESSAGE_RECEIVED" />

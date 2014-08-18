@@ -15,7 +15,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
-import cn.jpush.android.api.JPushInterface;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
@@ -26,7 +25,6 @@ public class KiiPushBroadcastReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(context);
         String gcmMessageType = gcm.getMessageType(intent);
-        String jpushMessageType = intent.getAction();
         if (gcmMessageType != null) {
             if (GoogleCloudMessaging.MESSAGE_TYPE_SEND_ERROR
                     .equals(gcmMessageType)) {
@@ -40,10 +38,6 @@ public class KiiPushBroadcastReceiver extends BroadcastReceiver {
                 messageReceived(context, intent);
             }
             setResultCode(Activity.RESULT_OK);
-        } else if (jpushMessageType != null) {
-            if (JPushInterface.ACTION_MESSAGE_RECEIVED.equals(jpushMessageType)) {
-                messageReceived(context, intent);
-            }
         } else {
             Log.e(TAG, "Unknown message type.");
         }
