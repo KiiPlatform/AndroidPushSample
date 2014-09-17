@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="kiipush_menu">
+        <item>@string/install</item>
+        <item>@string/subscribe</item>
+        <item>@string/unsubscribe</item>
+        <item>@string/bucket_control</item>
+        <item>@string/unregister_gcm</item>
+        <item>@string/create_uscope_topic</item>
+        <item>@string/subscribe_uscope_topic</item>
+        <item>@string/sendmessage_to_uscope_topic</item>
+        <item>@string/group_topic</item>
+        <item>@string/subscribe_ascope_topic</item>
+        <item>@string/subscribe_ascope_bucket</item>
+    </string-array>
+
+    <string-array name="bucket_control">
+        <item>@string/add_object</item>
+        <item>@string/edit_object</item>
+        <item>@string/show_bucket_data</item>
+        <item>@string/delete_bucket</item>
+        <item>@string/delete_object</item>
+        <item>@string/update_bucket_acl</item>
+        <item>@string/update_object_acl</item>
+    </string-array>
+
+    <string-array name="group_dialog">
+        <item>Add user</item>
+        <item>Create topic</item>
+        <item>Subscribe topic</item>
+        <item>Send message to topic</item>
+    </string-array>
+
+    <string-array name="filebucket_push_menu">
+        <item>File Bucket Controll>></item>
+        <item>Subscribe File Bucket</item>
+    </string-array>
+
+    <string-array name="filebucket_controll_menu">
+        <item>Create File</item>
+        <item>Update File(meta-data only)</item>
+        <item>Update File</item>
+        <item>Delete File</item>
+        <item>Move File to Trash</item>
+        <item>Update File ACL</item>
+        <item>Restore File From Trash</item>
+    </string-array>
+
+    <string-array name="send_push_menu">
+        <item>Send default message</item>
+        <item>Send default message with content-available=1</item>
+        <item>Send message with template file</item>
+        <item>Edit template file</item>
+    </string-array>
+
+    <string-array name="gcm_menu">
+        <item>@string/register_gcm</item>
+        <item>@string/install</item>
+        <item>@string/uninstall</item>
+        <item>@string/unregister_gcm</item>
+    </string-array>
+
+    <string-array name="jpush_menu">
+        <item>@string/register_jpush</item>
+        <item>@string/install</item>
+        <item>@string/uninstall</item>
+        <item>@string/unregister_jpush</item>
+    </string-array>
+
+    <string-array name="bucket_menu">
+        <item>@string/bucket_control</item>
+        <item>@string/subscribe</item>
+        <item>@string/unsubscribe</item>
+        <item>@string/subscribe_ascope_bucket</item>
+    </string-array>
+
+    <string-array name="topic_menu">
+        <item>@string/create_uscope_topic</item>
+        <item>@string/subscribe_uscope_topic</item>
+        <item>@string/sendmessage_to_uscope_topic</item>
+        <item>@string/group_topic</item>
+        <item>@string/subscribe_ascope_topic</item>
+    </string-array>
+
+</resources>
