@@ -1,14 +1,7 @@
 .gradle
 .idea
-gradle/
+app/build
 build/
-build.gradle
-gradlew
-gradlew.bat
-settings.gradle
-*.iml
-bin
-gen
 local.properties
 *.pyc
 app.properties
