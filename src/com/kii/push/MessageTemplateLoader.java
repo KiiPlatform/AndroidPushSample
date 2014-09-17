@@ -17,9 +17,12 @@ import android.net.Uri;
 import android.os.Environment;
 
 import com.kii.cloud.storage.APNSMessage;
+import com.kii.cloud.storage.APNSMessage.APNSData;
 import com.kii.cloud.storage.GCMMessage;
+import com.kii.cloud.storage.GCMMessage.GCMData;
+import com.kii.cloud.storage.JPushMessage;
+import com.kii.cloud.storage.JPushMessage.JPushData;
 import com.kii.cloud.storage.KiiPushMessage;
-import com.kii.cloud.storage.KiiPushMessage.Data;
 
 public class MessageTemplateLoader {
 
@@ -56,13 +59,15 @@ public class MessageTemplateLoader {
     public static KiiPushMessage loadMessageFromTemplate() throws IOException,
             JSONException {
         JSONObject obj = loadMessageTemplate();
-        JSONObject dataJson = obj.getJSONObject("data");
-        JSONObject gcmJson = obj.getJSONObject("gcm");
-        JSONObject apnsJson = obj.getJSONObject("apns");
+        JSONObject dataJson = obj.optJSONObject("data");
+        JSONObject gcmJson = obj.optJSONObject("gcm");
+        JSONObject apnsJson = obj.optJSONObject("apns");
+        JSONObject jpushJson = obj.optJSONObject("jpush");
         KiiPushMessage.Builder builder = KiiPushMessage
                 .buildWith(generateData(dataJson))
                 .withAPNSMessage(generateAPNSMessage(apnsJson))
-                .withGCMMessage(generateGCMMessage(gcmJson));
+                .withGCMMessage(generateGCMMessage(gcmJson))
+                .withJPushMessage(generateJPushMessage(jpushJson));
         if (obj.has("sendTopicID"))
             builder.sendTopicId(obj.getBoolean("sendTopicID"));
         if (obj.has("sendWhen"))
@@ -82,6 +87,9 @@ public class MessageTemplateLoader {
     private static GCMMessage generateGCMMessage(JSONObject json)
             throws JSONException {
         GCMMessage.Builder builder = GCMMessage.builder();
+        if (json == null) {
+            return builder.build();
+        }
         builder.enable(json.getBoolean("enabled"));
         if (json.has("deleyWhileIdle")) {
             builder.delayWhileIdle(json.getBoolean("deleyWhileIdle"));
@@ -100,7 +108,7 @@ public class MessageTemplateLoader {
             builder.delayWhileIdle(json.getBoolean("dryRun"));
         }
         if (json.has("data")) {
-            builder.withData(generateData(json.getJSONObject("data")));
+            builder.withGCMData((GCMData)generateData(json.getJSONObject("data")));
         }
 
         return builder.build();
@@ -109,6 +117,9 @@ public class MessageTemplateLoader {
     private static APNSMessage generateAPNSMessage(JSONObject json)
             throws JSONException {
         APNSMessage.Builder builder = APNSMessage.builder();
+        if (json == null) {
+            return builder.build();
+        }
         builder.enable(json.getBoolean("enabled"));
         if (json.has("sound")) {
             builder.withSound(json.getString("sound"));
@@ -134,12 +145,37 @@ public class MessageTemplateLoader {
                 builder.withAlertLocArgs(strArray);
             }
         }
+        if (json.has("data")) {
+            builder.withAPNSData((APNSData)generateData(json.getJSONObject("data")));
+        }
+        if (json.has("contentAvailable")) {
+            builder.withContentAvailable(json.getInt("contentAvailable"));
+        }
         return builder.build();
     }
 
-    private static Data generateData(JSONObject json) throws JSONException {
-        KiiPushMessage.Data data = new KiiPushMessage.Data();
-        Iterator it = json.keys();
+    private static JPushMessage generateJPushMessage(JSONObject json)
+            throws JSONException {
+        JPushMessage.Builder builder = JPushMessage.builder();
+        if (json == null) {
+            return builder.build();
+        }
+        builder.enable(json.getBoolean("enabled"));
+        if (json.has("data")) {
+            builder.withJPushData((JPushData) generateData(json
+                    .getJSONObject("data")));
+        }
+        return builder.build();
+    }
+
+    private static <T extends KiiPushMessage.Data> T generateData(
+            JSONObject json) throws JSONException {
+        if (json == null) {
+            return null;
+        }
+        @SuppressWarnings("unchecked")
+        T data = (T) new KiiPushMessage.Data();
+        Iterator<?> it = json.keys();
         while (it.hasNext()) {
             String key = (String) it.next();
             data.put(key, json.getString(key));

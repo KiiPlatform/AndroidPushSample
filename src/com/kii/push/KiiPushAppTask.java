@@ -167,7 +167,7 @@ public class KiiPushAppTask extends AsyncTask<Object, Void, String> {
 
     private String doUnsubscribeBucket() {
         try {
-            assertGCMRegistred();
+            assertPushRegistred();
             KiiUser user = KiiUser.getCurrentUser();
             KiiBucket bucket = user.bucket(Constants.PUSH_BUCKET_NAME);
             user.pushSubscription().unsubscribeBucket(bucket);
@@ -179,7 +179,7 @@ public class KiiPushAppTask extends AsyncTask<Object, Void, String> {
 
     private String doSubscribeBucket() {
         try {
-            assertGCMRegistred();
+            assertPushRegistred();
             KiiUser user = KiiUser.getCurrentUser();
             KiiBucket bucket = user.bucket(Constants.PUSH_BUCKET_NAME);
             user.pushSubscription().subscribeBucket(bucket);
@@ -191,7 +191,7 @@ public class KiiPushAppTask extends AsyncTask<Object, Void, String> {
 
     private String doCreateUscopeTopic() {
         try {
-            assertGCMRegistred();
+            assertPushRegistred();
             KiiTopic topic = KiiUser.topic(Constants.USERTOPIC);
             topic.save();
         } catch (Exception e) {
@@ -202,7 +202,7 @@ public class KiiPushAppTask extends AsyncTask<Object, Void, String> {
 
     private String doSubscribeUserScopeTopic() {
         try {
-            assertGCMRegistred();
+            assertPushRegistred();
             KiiTopic topic = KiiUser.topic(Constants.USERTOPIC);
             KiiUser.getCurrentUser().pushSubscription().subscribe(topic);
         } catch (Exception e) {
@@ -214,7 +214,7 @@ public class KiiPushAppTask extends AsyncTask<Object, Void, String> {
     private String doSendMessageToUserScopeTopic(KiiPushMessage msg) {
         try {
             Log.v(TAG, "Sending kii push message. JSON:"+msg.toJSON().toString(2));
-            assertGCMRegistred();
+            assertPushRegistred();
             KiiTopic topic = KiiUser.topic(Constants.USERTOPIC);
             topic.sendMessage(msg);
         } catch (Exception e) {
@@ -223,9 +223,12 @@ public class KiiPushAppTask extends AsyncTask<Object, Void, String> {
         return null;
     }
 
-    private void assertGCMRegistred() throws IllegalStateException {
-        if (TextUtils.isEmpty(GCMPreference.getRegistrationId(activity.getApplicationContext()))) {
-            throw new IllegalStateException("Register GCM before.");
+    private void assertPushRegistred() throws IllegalStateException {
+        if (TextUtils.isEmpty(GCMPreference.getRegistrationId(activity
+                .getApplicationContext()))
+                && TextUtils.isEmpty(JPushPreference.getRegistrationId(activity
+                        .getApplicationContext()))) {
+            throw new IllegalStateException("Register GCM or JPush before.");
         }
     }
 }

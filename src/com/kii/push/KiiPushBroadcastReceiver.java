@@ -24,20 +24,23 @@ public class KiiPushBroadcastReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(context);
-        String messageType = gcm.getMessageType(intent);
-        if (GoogleCloudMessaging.MESSAGE_TYPE_SEND_ERROR.equals(messageType)) {
-            messageReceived(context, intent);
-            Log.e(TAG, "Error occurred while gcm messge sending.");
-        } else if (GoogleCloudMessaging.MESSAGE_TYPE_DELETED
-                .equals(messageType)) {
-            Log.i(TAG, "Received deleted messages notification");
-        } else if (GoogleCloudMessaging.MESSAGE_TYPE_MESSAGE
-                .equals(messageType)) {
-            messageReceived(context, intent);
+        String gcmMessageType = gcm.getMessageType(intent);
+        if (gcmMessageType != null) {
+            if (GoogleCloudMessaging.MESSAGE_TYPE_SEND_ERROR
+                    .equals(gcmMessageType)) {
+                messageReceived(context, intent);
+                Log.e(TAG, "Error occurred while gcm messge sending.");
+            } else if (GoogleCloudMessaging.MESSAGE_TYPE_DELETED
+                    .equals(gcmMessageType)) {
+                Log.i(TAG, "Received deleted messages notification");
+            } else if (GoogleCloudMessaging.MESSAGE_TYPE_MESSAGE
+                    .equals(gcmMessageType)) {
+                messageReceived(context, intent);
+            }
+            setResultCode(Activity.RESULT_OK);
         } else {
             Log.e(TAG, "Unknown message type.");
         }
-        setResultCode(Activity.RESULT_OK);
     }
 
     protected void messageReceived(Context context, Intent intent) {

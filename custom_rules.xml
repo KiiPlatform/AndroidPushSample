@@ -41,6 +41,12 @@
             replace="\1${gcm-sender-id}&quot;"
             byline="true"
         />
+        <replaceregexp
+            file="AndroidManifest.xml"
+            match="(.*meta-data android:name=&quot;JPUSH_APPKEY&quot; *android:value=&quot;)(.*)(&quot;.*)"
+            replace="\1${jpush-app-key}\3"
+            byline="true"
+        />
     </target>
 
     <target name="-pre-build" depends="embedd-sender-id">

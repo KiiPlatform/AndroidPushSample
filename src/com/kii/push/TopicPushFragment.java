@@ -11,6 +11,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 
+import com.kii.cloud.storage.APNSMessage;
 import com.kii.cloud.storage.KiiPushMessage;
 import com.kii.push.ListDialogFragment.ListDialogFragmentCallback;
 
@@ -69,15 +70,23 @@ public class TopicPushFragment extends Fragment implements
     @Override
     public void onListDialogItemClicked(AdapterView<?> parent, View view,
             int pos, long id, int requestId) {
-        if (pos == 0) {
+        if (pos == 0 || pos == 1) {
             KiiPushMessage.Data data = new KiiPushMessage.Data();
             data.put("custom_message", "Hello, Kii Push servce!");
-            KiiPushMessage msg = KiiPushMessage.buildWith(data).build();
+            KiiPushMessage msg = null;
+            if (pos == 0) {
+                msg = KiiPushMessage.buildWith(data).build();
+            } else if (pos == 1) {
+                APNSMessage apns = APNSMessage.builder()
+                        .withContentAvailable(1).build();
+                msg = KiiPushMessage.buildWith(data).withAPNSMessage(apns)
+                        .build();
+            }
             new KiiPushAppTask(
                     (int) KiiPushAppTask.MENU_ID.SENDMESSAGE_TO_USCOPE_TOPIC,
                     getString(R.string.sendmessage_to_uscope_topic),
                     getActivity()).execute(msg);
-        } else if (pos == 1) {
+        } else if (pos == 2) {
             // Load message by MessageTemplateLoader and send.
             try {
                 KiiPushMessage message = MessageTemplateLoader
@@ -89,7 +98,7 @@ public class TopicPushFragment extends Fragment implements
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        } else if (pos == 2) {
+        } else if (pos == 3) {
             MessageTemplateLoader.launchEditor(getActivity());
         }
         dismissDialogByTag("SendMessage");
