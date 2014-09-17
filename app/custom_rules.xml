@@ -3,29 +3,29 @@
 
     <target name="copy-from-kiirest">
         <copy
-            file="kii_rest/kii_rest/setting.ini"
-            tofile="assets/${properties-file}"
+            file="../kii_rest/kii_rest/setting.ini"
+            tofile="src/main/assets/${properties-file}"
             overwrite="true"
         />
     </target>
 
     <target name="convert-to-java-properties" depends="copy-from-kiirest">
         <replaceregexp
-            file="assets/${properties-file}"
+            file="src/main/assets/${properties-file}"
             match="^\[.*\]$"
             replace=""
             byline="true"
         />
         <!-- client id and secret should be kept in secret -->
         <replaceregexp
-            file="assets/${properties-file}"
+            file="src/main/assets/${properties-file}"
             match="^client-id.*$"
             replace=""
             byline="true"
         />
         <!-- client id and secret should be kept in secret -->
         <replaceregexp
-            file="assets/${properties-file}"
+            file="src/main/assets/${properties-file}"
             match="^client-secret.*$"
             replace=""
             byline="true"
@@ -33,16 +33,16 @@
     </target>
 
     <target name="embedd-sender-id" depends="convert-to-java-properties">
-        <property file="assets/${properties-file}"/>
+        <property file="src/main/assets/${properties-file}"/>
         <echo message="gcm sender id ${gcm-sender-id}" />
         <replaceregexp
-            file="src/com/kii/push/Constants.java"
+            file="src/main/java/com/kii/push/Constants.java"
             match="(\s*public\s*static\s*final\s*String\s*GCM_SENDER_ID\s*=\s*&quot;)(.*)&quot;"
             replace="\1${gcm-sender-id}&quot;"
             byline="true"
         />
         <replaceregexp
-            file="AndroidManifest.xml"
+            file="src/main/AndroidManifest.xml"
             match="(.*meta-data android:name=&quot;JPUSH_APPKEY&quot; *android:value=&quot;)(.*)(&quot;.*)"
             replace="\1${jpush-app-key}\3"
             byline="true"
