@@ -7,3 +7,8 @@ gradlew
 gradlew.bat
 settings.gradle
 *.iml
+bin
+gen
+local.properties
+*.pyc
+app.properties
