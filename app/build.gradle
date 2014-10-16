@@ -25,6 +25,6 @@ preBuild.dependsOn('-pre-build')
 dependencies {
     compile 'com.android.support:support-v4:18.0.0'
     compile 'com.google.android.gms:play-services:+'
-    compile files('libs/KiiCloudStorageSDK_release_v2.1.26_5c9ec87.jar')
+    compile files('libs/KiiCloudStorageSDK_release_v2.1.28_c25b381.jar')
     compile files('libs/jpush-sdk-release1.6.3.jar')
 }
