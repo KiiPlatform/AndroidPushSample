@@ -87,7 +87,7 @@
     <orderEntry type="library" exported="" name="support-annotations-21.0.0" level="project" />
     <orderEntry type="library" exported="" name="support-v4-21.0.0" level="project" />
     <orderEntry type="library" exported="" name="play-services-6.5.87" level="project" />
-    <orderEntry type="library" exported="" name="KiiCloudStorageSDK_release_v2.1.28_c25b381" level="project" />
+    <orderEntry type="library" exported="" name="KiiCloudStorageSDK-encryptedBucket-b7544cd" level="project" />
   </component>
 </module>
 

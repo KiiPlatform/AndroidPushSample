@@ -168,8 +168,8 @@ public class KiiPushAppTask extends AsyncTask<Object, Void, String> {
     private String doUnsubscribeBucket() {
         try {
             assertPushRegistred();
-            KiiUser user = KiiUser.getCurrentUser();
-            KiiBucket bucket = user.bucket(Constants.PUSH_BUCKET_NAME);
+            KiiUser user = Kii.user();
+            KiiBucket bucket = getCurrentUserBucket(Constants.PUSH_BUCKET_NAME);
             user.pushSubscription().unsubscribeBucket(bucket);
         } catch (Exception e) {
             this.e = e;
@@ -180,8 +180,8 @@ public class KiiPushAppTask extends AsyncTask<Object, Void, String> {
     private String doSubscribeBucket() {
         try {
             assertPushRegistred();
-            KiiUser user = KiiUser.getCurrentUser();
-            KiiBucket bucket = user.bucket(Constants.PUSH_BUCKET_NAME);
+            KiiUser user = Kii.user();
+            KiiBucket bucket = getCurrentUserBucket(Constants.PUSH_BUCKET_NAME);
             user.pushSubscription().subscribeBucket(bucket);
         } catch (Exception e) {
             this.e = e;
@@ -230,5 +230,11 @@ public class KiiPushAppTask extends AsyncTask<Object, Void, String> {
                         .getApplicationContext()))) {
             throw new IllegalStateException("Register GCM or JPush before.");
         }
+    }
+
+    private KiiBucket getCurrentUserBucket(String bucketName) {
+        KiiUser user = Kii.user();
+        return Constants.USE_ENCRYPT_BUCKET ? user.encryptedBucket(bucketName) :
+                user.bucket(bucketName);
     }
 }

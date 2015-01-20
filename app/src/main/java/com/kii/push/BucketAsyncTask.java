@@ -105,8 +105,8 @@ public class BucketAsyncTask extends AsyncTask<String, Void, Void> {
     private void doSaveObject(String bucketName) {
         this.taskName = "Create Object";
         try {
-            KiiUser user = KiiUser.getCurrentUser();
-            KiiObject object = user.bucket(bucketName).object();
+            KiiBucket bucket = getCurrentUserBucket(bucketName);
+            KiiObject object = bucket.object();
             object.set("key", "value");
             object.set("time", String.valueOf(System.currentTimeMillis()));
             object.set("message", "Bucket data was changed.");
@@ -191,7 +191,7 @@ public class BucketAsyncTask extends AsyncTask<String, Void, Void> {
     private void doBucketACLUpdate(String bucketName) {
         this.taskName = "Update Bucket ACL";
         try {
-            KiiBucket bucket = KiiUser.getCurrentUser().bucket(bucketName);
+            KiiBucket bucket = getCurrentUserBucket(bucketName);
             KiiACL acl = bucket.acl();
             Set<KiiACLEntry> set = acl.listACLEntries();
 
@@ -224,7 +224,7 @@ public class BucketAsyncTask extends AsyncTask<String, Void, Void> {
         this.taskName = "Query Bucket";
         try {
             // Query Use Pattern
-            KiiBucket bucket = KiiUser.getCurrentUser().bucket(bucketName);
+            KiiBucket bucket = getCurrentUserBucket(bucketName);
             List<KiiObject> objects = null;
             KiiQuery query = new KiiQuery();
             query.sortByDesc("time");
@@ -242,12 +242,16 @@ public class BucketAsyncTask extends AsyncTask<String, Void, Void> {
     private void doDeleteBucket(String bucketName) {
         this.taskName = "Delete Bucket";
         try {
-            KiiUser user = KiiUser.getCurrentUser();
-            KiiBucket bucket = user.bucket(bucketName);
+            KiiBucket bucket = getCurrentUserBucket(bucketName);
             bucket.delete();
         } catch (Exception e) {
             this.e = e;
         }
     }
 
+    private KiiBucket getCurrentUserBucket(String bucketName) {
+        KiiUser user = KiiUser.getCurrentUser();
+        return Constants.USE_ENCRYPT_BUCKET ?
+                user.encryptedBucket(bucketName) : user.bucket(bucketName);
+    }
 }

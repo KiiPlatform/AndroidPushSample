@@ -11,6 +11,7 @@ public class Constants {
      * Bucket name to subscribe
      */
     public static final String PUSH_BUCKET_NAME = "PushMyBucket";
+    public static final boolean USE_ENCRYPT_BUCKET = false;
 
     public static final String EXTRA_MESSAGE = "message";
     public static final String ACTION_REGISTERED_GCM = "com.kii.push.GCMRegistered";
