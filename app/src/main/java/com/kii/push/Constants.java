@@ -5,7 +5,7 @@ public class Constants {
     public static final String USERTOPIC = "UserTopic";
     public static final String GROUPTOPIC = "GroupTopic";
     public static final String GROUPTOPIC_MESSAGE= "Hi, members!";
-    public static final String GCM_SENDER_ID = "715025018307";
+    public static final String GCM_SENDER_ID = "{your gcm app project id published on Google developer console}";
 
     /**
      * Bucket name to subscribe

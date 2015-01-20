@@ -132,7 +132,7 @@
             </intent-filter>
         </receiver>
 
-        <meta-data android:name="JPUSH_APPKEY" android:value="put-your-jpush-appkey" />
+        <meta-data android:name="JPUSH_APPKEY" android:value="{your JPush app key published on JPush developer console}" />
         <meta-data android:name="JPUSH_CHANNEL" android:value="developer-default" />
     </application>
 
