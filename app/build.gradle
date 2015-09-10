@@ -1,23 +1,19 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 10
-    buildToolsVersion "21.1.1"
+    compileSdkVersion 23
+    buildToolsVersion "22.0.1"
 
     defaultConfig {
         applicationId "com.kii.push"
         minSdkVersion 10
-        targetSdkVersion 10
+        targetSdkVersion 22
     }
 
 }
 
-ant.importBuild("custom_rules.xml")
-
-preBuild.dependsOn('-pre-build')
-
 dependencies {
-    compile 'com.android.support:support-v4:18.0.0'
+    compile 'com.android.support:appcompat-v7:23.0.1'
     compile 'com.google.android.gms:play-services:+'
     compile files('libs/KiiCloudStorageSDK_release_v2.1.28_c25b381.jar')
     compile files('libs/jpush-sdk-release1.6.3.jar')
