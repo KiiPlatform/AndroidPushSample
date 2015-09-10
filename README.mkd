@@ -3,3 +3,39 @@
 ## Requirements:
 * Android Studio
 
+## Setup
+Please prepare GCM/ JPush accounts and setup your Kii Cloud App beforehand.
+
+[guide](http://docs.kii.com/en/guides/android/quickstart/adding-kii-push-notification-to-your-application/)
+
+### Edit app/src/main/assets/app.properties.
+Replace the value of app-id, app-key, and host with your own application's.
+If you haven't create your app, you can create your application on https://developer.kii.com
+
+```
+app-id={your app id published on developer.kii.com}
+app-key={your app key published on developer.kii.com}
+#JP: api-jp.kii.com, CN: api-cn2.kii.com, SG: api-sg.kii.com
+host=api.kii.com
+```
+
+## Setup GCM
+### Edit app/src/main/java/com/kii/push/Constants.java
+Put your GCM Project ID here.
+
+```java
+    public static final String GCM_SENDER_ID = "{your gcm app project id published on Google developer console}";
+```
+
+## Setup JPush
+This step can be skipped If you work only with GCM.
+Put your JPush App Key here.
+
+### Edit app/src/main/AndroidManifest.xml
+```xml
+        <meta-data android:name="JPUSH_APPKEY" android:value="{your JPush app key published on JPush developer console}" />
+```
+
+## Send Push Notification from developer console.
+Please read the guid here.
+[guide](http://docs.kii.com/en/guides/android/managing-push-notification/direct-push/)
