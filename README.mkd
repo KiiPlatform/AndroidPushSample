@@ -4,9 +4,7 @@
 * Android Studio
 
 ## Setup
-Please prepare GCM/ JPush accounts and setup your Kii Cloud App beforehand.
-
-[guide](http://docs.kii.com/en/guides/android/quickstart/adding-kii-push-notification-to-your-application/)
+Please read the [guide](http://docs.kii.com/en/guides/android/quickstart/adding-kii-push-notification-to-your-application/) and  prepare GCM/ JPush accounts and setup your Kii Cloud App beforehand.
 
 ### Edit app/src/main/assets/app.properties.
 Replace the value of app-id, app-key, and host with your own application's.
@@ -37,5 +35,4 @@ Put your JPush App Key here.
 ```
 
 ## Send Push Notification from developer console.
-Please read the guid here.
-[guide](http://docs.kii.com/en/guides/android/managing-push-notification/direct-push/)
+Please read the [guide](http://docs.kii.com/en/guides/android/managing-push-notification/direct-push/) here.
