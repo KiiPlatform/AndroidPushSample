@@ -9,8 +9,12 @@ import android.util.Log;
 
 public class PropertyManager {
 
-    private static final String TAG = "PropertyManager";
-    private boolean loaded = false;
+    private static final String APP_ID = "9ab34d8b";
+    private static final String APP_KEY = "7a950d78956ed39f3b0815f0f001b43b";
+    private static final String APP_URL = "https://api-jp.kii.com/api";
+    private static final String APP_TOPIC_NAME = "appTestTopic";
+    private static final String APP_BUCKET_NAME = "appBucket";
+
     private PropertyManager() {
     }
 
@@ -21,62 +25,27 @@ public class PropertyManager {
     }
 
     public synchronized void load(Context ctx) {
-        if (this.loaded)
-            return;
-        Properties p = System.getProperties();
-        BufferedInputStream in = null;
-        try {
-            in = new BufferedInputStream(ctx.getResources().getAssets()
-                    .open("app.properties"));
-            p.load(in);
-            this.loaded = true;
-        } catch (IOException e) {
-            throw new RuntimeException("failed to read prop file", e);
-        } finally {
-            if (in !=null) {
-                try {
-                    in.close();
-                } catch (IOException e) {
-                }
-            }
-        }
+        // Loading from file is abolished.
     }
 
     public String getAppId() {
-        Properties p = System.getProperties();
-        String value = p.getProperty("app-id");
-        Log.v(TAG, "App id: " + value);
-        return value;
+        return APP_ID;
     }
 
     public String getAppKey() {
-        Properties p = System.getProperties();
-        String value = p.getProperty("app-key");
-        Log.v(TAG, "App key: " + value);
-        return value;
+        return APP_KEY;
     }
 
     public String getBaseUri() {
-        Properties p = System.getProperties();
-        String host = p.getProperty("host");
-        String value =  "https://" + host + "/api";
-        Log.v(TAG, "Base uri: " + value);
-        return value;
-
+        return APP_URL;
     }
 
     public String getAppTopicName() {
-        Properties p = System.getProperties();
-        String value =  p.getProperty("app-topic-name");
-        Log.v(TAG, "App topic name: " + value);
-        return value;
+        return APP_TOPIC_NAME;
     }
 
     public String getAppBucketName() {
-        Properties p = System.getProperties();
-        String value =  p.getProperty("app-bucket-name");
-        Log.v(TAG, "App topic name: " + value);
-        return value;
+        return APP_BUCKET_NAME;
     }
 
 }
