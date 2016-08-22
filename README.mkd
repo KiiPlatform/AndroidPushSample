@@ -6,16 +6,16 @@
 ## Setup
 Please read the [guide](http://docs.kii.com/en/guides/android/quickstart/adding-kii-push-notification-to-your-application/) and  prepare GCM/ JPush accounts and setup your Kii Cloud App beforehand.
 
-### Edit app/src/main/assets/app.properties.
-Replace the value of app-id, app-key, and host with your own application's.
+### Edit app/src/main/java/com/kii/push/PropertyManager.java
+Replace the value of APP\_ID, APP\_KEY, and APP\_URL with your own application's.
 If you haven't create your app, you can create your application on https://developer.kii.com
 
-```
-app-id={your app id published on developer.kii.com}
-app-key={your app key published on developer.kii.com}
-#JP: api-jp.kii.com, CN: api-cn2.kii.com, SG: api-sg.kii.com
-host=api.kii.com
-```
+Location and APP\_URL string:
+JP: https://api-jp.kii.com/api
+US: https://api.kii.com/api
+CN: https://api-cn3.kii.com/api
+SG: https://api-sg.kii.com/api
+EU: https://api-eu.kii.com/api
 
 ## Setup GCM
 ### Edit app/src/main/java/com/kii/push/Constants.java
