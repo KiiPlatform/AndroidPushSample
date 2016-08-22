@@ -19,7 +19,7 @@ import android.util.Log;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 public class KiiPushBroadcastReceiver extends BroadcastReceiver {
-    private static final String TAG = "KiiPushBroadcastReceiver";
+    private static final String TAG = "KiiPushReceiver";
 
     @Override
     public void onReceive(Context context, Intent intent) {
@@ -48,15 +48,10 @@ public class KiiPushBroadcastReceiver extends BroadcastReceiver {
         fileLog(TAG, "Time: " + System.currentTimeMillis());
         NotificationManager nManager = (NotificationManager) context
                 .getSystemService(Context.NOTIFICATION_SERVICE);
-        Notification n = new Notification();
         Bundle extras = intent.getExtras();
         String str = "Tap to view receive JSON contents.";
         Log.i(TAG, str);
 
-        n.icon = R.drawable.ic_launcher;
-        n.tickerText = str;
-        n.number = 1;
-        n.when = System.currentTimeMillis();
 
         Intent i = new Intent(context.getApplicationContext(),
                 ShowPushMessageActivity.class);
@@ -64,11 +59,16 @@ public class KiiPushBroadcastReceiver extends BroadcastReceiver {
         i.setAction(Context.ACTIVITY_SERVICE);
         PendingIntent pend = PendingIntent.getActivity(context, 0, i,
                 PendingIntent.FLAG_UPDATE_CURRENT);
-        n.setLatestEventInfo(context.getApplicationContext(),
-                context.getString(R.string.app_name), str, pend);
+
+        Notification.Builder b = new Notification.Builder(context);
+        b.setSmallIcon(R.drawable.ic_launcher);
+        b.setTicker(str);
+        b.setNumber(1);
+        b.setWhen(System.currentTimeMillis());
+        b.setContentIntent(pend);
 
         nManager.cancelAll();
-        nManager.notify(1, n);
+        nManager.notify(1, b.build());
     }
 
     private void fileLog(String tag, String message) {
