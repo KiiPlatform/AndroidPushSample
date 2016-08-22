@@ -9,8 +9,8 @@ import android.util.Log;
 
 public class PropertyManager {
 
-    private static final String APP_ID = "9ab34d8b";
-    private static final String APP_KEY = "7a950d78956ed39f3b0815f0f001b43b";
+    private static final String APP_ID = "{Your App ID}";
+    private static final String APP_KEY = "{Your App Key}";
     private static final String APP_URL = "https://api-jp.kii.com/api";
     private static final String APP_TOPIC_NAME = "appTestTopic";
     private static final String APP_BUCKET_NAME = "appBucket";
